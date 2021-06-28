@@ -1,0 +1,18 @@
+.auth__container {
+    width: 30vw;
+    min-width: 320px;
+    height: 35vh;
+    background-color: #252526;
+    border-radius: 3vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.auth__caption {
+    text-align: center;
+    margin: 20px 0 20px 0;
+    color: #F09947;
+}
+

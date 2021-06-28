@@ -1,0 +1,14 @@
+.main__caption {
+    max-width: 600px;
+    text-align: center;
+    padding-top: 30px;
+}
+
+.main__caption:after {
+    display: block;
+    content: '';
+    width: 200px;
+    height: 3px;
+    background-color: #F09947;
+    margin: 30px auto;
+}

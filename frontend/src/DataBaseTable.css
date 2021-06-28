@@ -1,0 +1,14 @@
+.db-menu__table {
+    width: 70%;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.db-menu__table table {
+    color: #FFF !important;
+}
+
+.db-menu__table table tbody tr:hover {
+    color: #F09947 !important;
+}

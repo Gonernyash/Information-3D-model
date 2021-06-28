@@ -1,0 +1,24 @@
+.db-menu {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.db-dropdown {
+    display: flex;
+    justify-content: center;
+}
+
+.db-dropdown:hover > .dropdown-toggle {
+    background-color: #F09947;
+}
+
+.db-dropdown.show > .dropdown-toggle {
+    background-color: #F09947;
+}
+
+
+
+.db-menu__inner {
+    display: flex;
+    margin-top: 20px;
+}

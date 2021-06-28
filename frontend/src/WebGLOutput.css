@@ -1,0 +1,115 @@
+.webgl__container {
+    position: relative;
+}
+
+.webgl__container.fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.webgl__output {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.gui__container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.webgl__blackout {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background-color: #000000;
+    opacity: 0.65;
+}
+
+.webgl__start {
+    width: 100px;
+    height: 100px;
+    background-color: #F09947;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.webgl__start::after{
+    display: block;
+    content: '';
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 50%;
+    left: 52%;
+    transform: translate(-50%, -50%);
+    border-style: solid;
+    border-width: 25px 0 25px 25px;
+    border-color: transparent transparent transparent #FFFFFF;
+}  
+
+.webgl__start:hover {
+    width: 120px;
+    height: 120px;
+}
+
+.webgl__start:hover::after {
+    border-width: 35px 0 35px 35px;
+}
+
+.webgl__button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #F09947;
+    position: absolute;
+}
+
+.webgl__button:hover {
+    width: 40px;
+    height: 40px;
+}
+
+.webgl__icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #FFFFFF;
+    font-size: 15px;   
+}
+
+
+.webgl__button:hover .webgl__icon {
+    font-size: 20px;
+}
+
+.webgl__fullscreen {
+    bottom: 20px;
+    right: 20px;
+    z-index: 3;
+}
+
+.webgl__fullscreen:hover {
+    bottom: 15px;
+    right: 15px;
+}
+
+
+
+
+
+
+
