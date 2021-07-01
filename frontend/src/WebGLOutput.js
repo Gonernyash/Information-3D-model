@@ -47,12 +47,12 @@ function WebGLOutput() { // Компонент с 3D-моделью
         <div className="webgl__container" ref={container}> {/*Контейнер со сценой*/}
             <div id="WebGL-Output" className="webgl__output"> </div> {/*Сцена*/}
             <div id='GUI-Container' className="gui__container"></div> {/*Окно с настройкой*/}
-            <div className='webgl__blackout' ref={blackout}></div> {/*Затемнение*/}
+            <div id='WebGL-Blackout' className='webgl__blackout' ref={blackout}></div> {/*Затемнение*/}
             <button type='button' className="webgl__start" onClick={event => start(event)}></button> {/*Кнопка "Пуск"*/}
             {/*Кнопка перехода(выхода) в полноэкранный режим*/}
             <button type='button' id="WebGL-fullscreen" className="webgl__button webgl__fullscreen" onClick={toggleFullscreen}> 
-                <i className="bi bi-arrows-angle-expand webgl__icon" ref={iconOpen}></i> {/*Иконка "Открыть полноэкранный режим"*/}
-                <i className="bi bi-arrows-angle-contract webgl__icon none" ref={iconClose}></i> {/*Иконка "Закрыть полноэкранный режим"*/}
+                <i id='WebGL-FSIcon--closed' className="bi bi-arrows-angle-expand webgl__icon" ref={iconOpen}></i> {/*Иконка "Открыть полноэкранный режим"*/}
+                <i id='WebGL-FSIcon--opened' className="bi bi-arrows-angle-contract webgl__icon none" ref={iconClose}></i> {/*Иконка "Закрыть полноэкранный режим"*/}
             </button>
             <WebGLSearch ref={search}/> {/*Меню поиска*/}
             <WebGLReturnButton />

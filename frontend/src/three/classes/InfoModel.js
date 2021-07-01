@@ -11,9 +11,14 @@ class InfoModel {
     _camera = null;
     _renderer = null;
     _controls = null;
-    
+    // Элементы DOM
     _container = null;
+    _blackout = null;
+    _fullScreenIcon = null;
     _returnButton = null;
+    _info = null;
+    _searchMenu = null;
+    // Параметры состояния сцены
     _structures = [];
     _objects = [];
     _models = [];
@@ -25,7 +30,6 @@ class InfoModel {
     
     constructor() {
         this._webglAnimate = this._webglAnimate.bind(this);
-        //this._webglRender = this._webglRender.bind(this);
 
         this._webglInit();
         this._webglStart();
@@ -47,7 +51,15 @@ class InfoModel {
 
     _webglInit() {
         this._container = document.getElementById('WebGL-Output');
-        this._returnButton = document.getElementById('returnButton');
+        this._blackout = document.getElementById('WebGL-Blackout');
+        this._fullScreenIcon = {
+            opened: document.getElementById('WebGL-FSIcon--opened'),
+            closed: document.getElementById('WebGL-FSIcon--closed')
+        } 
+        this._returnButton = document.getElementById('WebGL-ReturnButton');
+        this._info = document.getElementById('WebGL-Info');
+        this._searchMenu = document.getElementById('WebGL-Search');
+
         this._sceneWidth = this._container.offsetWidth;
         this._sceneHeight = window.innerHeight / (window.innerWidth / this._sceneWidth);
         this._scene = new THREE.Scene();
@@ -105,6 +117,20 @@ class InfoModel {
         this._controls.autoRotate = true;
         this._controls.enableRotate = false;
         this._controls.enableZoom = false;
+    }
+
+    closeInfo() {
+        this._info.classList.add('none'); 
+        this.hideModelsHightlights();
+        this.hideLinkPoints();
+    }
+
+    returnBack() {
+        const current = this.getCurrent();
+        if (current.prev) {
+            this.closeInfo();
+            this.chooseScene(current.prev.src);
+        }
     }
 
     _setAxes() {

@@ -1,7 +1,7 @@
 import './WebGLSearch.css';
 import React, {useRef} from 'react';
-import {closeInfo} from './WebGLInformation';
 import WebGLSearchInput from './WebGLSearchInput';
+import { infoModel } from './WebGLOutput';
 
 let isOpen = false;
 
@@ -25,7 +25,7 @@ const WebGLSearch = React.forwardRef((props, ref) => {
             input.current.classList.add('webgl-search__input-container--opened');
             input.current.focus();
             const info = document.getElementById('WebGL-info');
-            closeInfo(info);
+            infoModel.closeInfo(info);
             isOpen = true;
         } else {
             closeSearch(ref.current);
@@ -33,7 +33,7 @@ const WebGLSearch = React.forwardRef((props, ref) => {
     };
 
     return (
-        <div ref={ref} className="webgl-search__container none" id="WebGL-search">
+        <div ref={ref} className="webgl-search__container none" id="WebGL-Search">
             <button type='button'  className="webgl-search__button webgl__button" ref={button} onClick={toggleSearch}>
                 <i className="bi bi-search webgl__icon" ref={searchIcon}></i>
                 <i className="bi bi-x webgl__icon none" ref={closeIcon}></i>
