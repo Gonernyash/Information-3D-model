@@ -1,7 +1,6 @@
 import './WebGLReturnButton.css';
 import './index.css';
-import {infoModel} from './three/init';
-import changeScene from './three/main';
+import {infoModel} from './WebGLOutput';
 import {closeInfo} from './WebGLInformation';
 
 
@@ -11,7 +10,7 @@ function WebGLReturnButton() {
         if (current.prev) {
             const info = document.getElementById('WebGL-info');
             closeInfo(info);
-            changeScene(current.prev.src);
+            infoModel.chooseScene(current.prev.src);
         }
     }
 

@@ -1,5 +1,4 @@
 import {useEffect, useRef} from 'react';
-import chooseScene, {createScene, enableOrbitControls, rendererResize} from './three/main';
 import WebGLInformation from './WebGLInformation';
 import WebGLSearch from './WebGLSearch';
 import WebGLReturnButton from './WebGLReturnButton';
@@ -12,10 +11,7 @@ function WebGLOutput() { // Компонент с 3D-моделью
     // Эта функция вызовется после отрисовки компонента
     useEffect(() => {
         infoModel = new InfoModel();
-        console.log(InfoModel);
-        console.log(infoModel);
-        createScene(); // Инициализация сцены
-        chooseScene('main.js'); // Выбор комнаты
+        infoModel.chooseScene('main.js'); // Выбор комнаты
     });
     // Ссылки на HTML-элементы
     const container = useRef(null);
@@ -28,7 +24,7 @@ function WebGLOutput() { // Компонент с 3D-моделью
         blackout.current.classList.add('none'); // Скрытие затемнения
         event.target.classList.add('none'); // Скрытие кнопки "Пуск"
         search.current.classList.remove('none'); // Показ кнопки поиска
-        enableOrbitControls(); // Вкл. управления камерой с помощью мыши 
+        infoModel.enableOrbitControls(); // Вкл. управления камерой с помощью мыши 
     }
 
     let isFullScreen = false; // Переменная, отвечающая за вкл/выкл полноэкранного режима
@@ -43,7 +39,7 @@ function WebGLOutput() { // Компонент с 3D-моделью
             iconOpen.current.classList.remove('none'); // Меняем иконку на кнопке
             iconClose.current.classList.add('none');
         }
-        rendererResize(); // Изменяем масштаб сцены
+        infoModel.rendererResize(); // Изменяем масштаб сцены
         isFullScreen = !isFullScreen; // Переключаем переменную
     }
     // Возвращаем HTML

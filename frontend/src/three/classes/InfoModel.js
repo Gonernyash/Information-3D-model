@@ -24,6 +24,9 @@ class InfoModel {
     _sceneHeight = 0;
     
     constructor() {
+        this._webglAnimate = this._webglAnimate.bind(this);
+        //this._webglRender = this._webglRender.bind(this);
+
         this._webglInit();
         this._webglStart();
     }
@@ -56,7 +59,6 @@ class InfoModel {
         new Interaction(this._renderer, this._scene, this._camera);
         this._setOrbitControls();
         GUIInit();
-        this._webglStart();
     }
     
     _webglStart() {
@@ -70,12 +72,11 @@ class InfoModel {
         } else {
             this._camera.lookAt(0, 0, 0);
         }
-        
-        this._renderer.render(this._renderer, this._camera);
+
+        this._renderer.render(this._scene, this._camera);
     }
 
     _webglAnimate() {
-        console.log(this);
         requestAnimationFrame(this._webglAnimate);
         this._controls.update();
         this._webglRender();
@@ -86,6 +87,12 @@ class InfoModel {
         this._controls.update();
         this._controls.autoRotateSpeed = 1;
         this.disableOrbitControls();
+    }
+
+    rendererResize() {
+        const sceneWidth = this._container.offsetWidth ;
+        const sceneHeight = window.innerHeight / (window.innerWidth / sceneWidth);
+        this._renderer.setSize(sceneWidth, sceneHeight);
     }
 
     enableOrbitControls() {
@@ -161,7 +168,7 @@ class InfoModel {
         this._scene.clear();
     }
 
-    static toVector(x, y, z) {
+    toVector(x, y, z) {
         return {
             x: x,
             y: y,
@@ -169,7 +176,7 @@ class InfoModel {
         }
     }
 
-    static vectorToArr(obj) {
+    vectorToArr(obj) {
         return [obj.x, obj.y, obj.z]
     }
 }

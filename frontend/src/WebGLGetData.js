@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {infoModel} from './three/init';
+import {infoModel} from './WebGLOutput';
 import {Spinner} from 'react-bootstrap';
 
 let struct;

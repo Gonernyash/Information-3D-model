@@ -3,7 +3,7 @@ import Model from './classes/Model';
 import {toVector, toStructure} from './classes/Structure';
 import {showModelInformation, showFloorInformation, showRoomInformation} from '../WebGLGetData';
 import Building from './classes/Building';
-import {infoModel} from './init';
+import {infoModel} from '../WebGLOutput';
 
 //Script
 function scriptInit(name) {
