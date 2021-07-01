@@ -25,7 +25,7 @@ function init() {
 //Подготовка сцены
 function sceneInit() {
     container = document.getElementById('WebGL-Output');
-    const sceneWidth = container.offsetWidth ;
+    const sceneWidth = container.offsetWidth;
     const sceneHeight = window.innerHeight / (window.innerWidth / sceneWidth);
     SCENE = new THREE.Scene();
     CAMERA = new THREE.PerspectiveCamera(45, sceneWidth / sceneHeight , 0.1, 1000);

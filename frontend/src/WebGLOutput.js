@@ -4,10 +4,16 @@ import WebGLInformation from './WebGLInformation';
 import WebGLSearch from './WebGLSearch';
 import WebGLReturnButton from './WebGLReturnButton';
 import './WebGLOutput.css'
+import InfoModel from './three/classes/InfoModel';
+
+let infoModel = null;
 
 function WebGLOutput() { // Компонент с 3D-моделью
     // Эта функция вызовется после отрисовки компонента
     useEffect(() => {
+        infoModel = new InfoModel();
+        console.log(InfoModel);
+        console.log(infoModel);
         createScene(); // Инициализация сцены
         chooseScene('main.js'); // Выбор комнаты
     });
@@ -60,4 +66,5 @@ function WebGLOutput() { // Компонент с 3D-моделью
 }
 
 export default WebGLOutput
+export {infoModel}
 

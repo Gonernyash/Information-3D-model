@@ -35,10 +35,10 @@ function initLights() {
 }
 
 //Создание осей
-// function axesInit() {
-//     const axes = new THREE.AxesHelper(200);
-//     SCENE.add(axes);
-// }
+function axesInit() {
+    const axes = new THREE.AxesHelper(200);
+    SCENE.add(axes);
+}
 
 function render() {
     if (infoModel.current) {
