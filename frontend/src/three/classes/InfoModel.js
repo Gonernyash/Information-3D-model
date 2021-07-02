@@ -12,12 +12,14 @@ class InfoModel {
     _renderer = null;
     _controls = null;
     // Элементы DOM
+    _output = null;
     _container = null;
     _blackout = null;
     _fullScreenIcon = null;
     _returnButton = null;
     _info = null;
     _searchMenu = null;
+    _startButton = null;
     // Параметры состояния сцены
     _structures = [];
     _objects = [];
@@ -27,6 +29,7 @@ class InfoModel {
     _cameraZoom = 200; // 200 - значение по умолчанию
     _sceneWidth = 0;
     _sceneHeight = 0;
+    _isFullScreen = false;
     
     constructor() {
         this._webglAnimate = this._webglAnimate.bind(this);
@@ -50,7 +53,8 @@ class InfoModel {
     }
 
     _webglInit() {
-        this._container = document.getElementById('WebGL-Output');
+        this._output = document.getElementById('WebGL-Output');
+        this._container = document.getElementById('WebGL-Container');
         this._blackout = document.getElementById('WebGL-Blackout');
         this._fullScreenIcon = {
             opened: document.getElementById('WebGL-FSIcon--opened'),
@@ -59,8 +63,9 @@ class InfoModel {
         this._returnButton = document.getElementById('WebGL-ReturnButton');
         this._info = document.getElementById('WebGL-Info');
         this._searchMenu = document.getElementById('WebGL-Search');
+        this._startButton = document.getElementById('WebGL-StartButton');
 
-        this._sceneWidth = this._container.offsetWidth;
+        this._sceneWidth = this._output.offsetWidth;
         this._sceneHeight = window.innerHeight / (window.innerWidth / this._sceneWidth);
         this._scene = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera(45, this._sceneWidth / this._sceneHeight , 0.1, 1000);
@@ -74,7 +79,7 @@ class InfoModel {
     }
     
     _webglStart() {
-        this._container.appendChild(this._renderer.domElement);
+        this._output.appendChild(this._renderer.domElement);
         this._webglAnimate();
     }
 
@@ -95,14 +100,48 @@ class InfoModel {
     }
 
     _setOrbitControls() {
-        this._controls = new OrbitControls(this._camera, this._container);
+        this._controls = new OrbitControls(this._camera, this._output);
         this._controls.update();
         this._controls.autoRotateSpeed = 1;
         this.disableOrbitControls();
     }
 
-    rendererResize() {
-        const sceneWidth = this._container.offsetWidth ;
+    modelStart() {
+        this._blackout.classList.add('none'); // Скрытие затемнения
+        this._startButton.classList.add('none'); // Скрытие кнопки "Пуск"
+        this._searchMenu.classList.remove('none'); // Показ кнопки поиска
+        this.enableOrbitControls(); // Вкл. управления камерой с помощью мыши
+    }
+
+    modelStop() {
+        this._blackout.classList.remove('none'); 
+        this._startButton.classList.remove('none'); 
+        this._searchMenu.classList.add('none'); 
+        this.disableOrbitControls(); 
+    }
+
+    openFullScreen() {
+        this._container.classList.add('fullscreen'); // Изменяем масштаб контейнера со сценой
+        this._fullScreenIcon.closed.classList.add('none'); // Меняем иконку на кнопке
+        this._fullScreenIcon.opened.classList.remove('none');
+        this.rendererAutoResize();
+        this._isFullScreen = true;
+    }
+
+    closeFullScreen() {
+        this._container.classList.remove('fullscreen'); // Изменяем масштаб контейнера со сценой
+        this._fullScreenIcon.closed.classList.remove('none'); // Меняем иконку на кнопке
+        this._fullScreenIcon.opened.classList.add('none');
+        this.rendererAutoResize();
+        this._isFullScreen = false;
+    }
+
+    toggleFullScreen() {
+        this._isFullScreen ? this.closeFullScreen() : this.openFullScreen();
+    }
+
+    rendererAutoResize() {
+        const sceneWidth = this._output.offsetWidth ;
         const sceneHeight = window.innerHeight / (window.innerWidth / sceneWidth);
         this._renderer.setSize(sceneWidth, sceneHeight);
     }
