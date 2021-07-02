@@ -8,7 +8,7 @@ let modelDataCallback;
 let floorDataCallback;
 let roomDataCallback;
 
-function WebGLGetData(props) {
+function WebGLGetData() {
 
     let [items, setItems] = useState([]);
     
@@ -47,7 +47,7 @@ function WebGLGetData(props) {
                 info.push(<ul className="webgl__items-list" key={items.length}>{items}</ul>);
             }
             info.push(
-                <button className="webgl__infobtn" key={info.length} onClick={props.setScene}>
+                <button className="webgl__infobtn" key={info.length} onClick={() => infoModel.chooseScene()}>
                     <h6 className="webgl__infobtn__caption">Подробнее</h6>
                 </button>
             );
@@ -62,7 +62,7 @@ function WebGLGetData(props) {
                 <h6 key={3}>{result[2]}</h6>
             ];
             info.push(
-                <button className="webgl__infobtn" key={info.length} onClick={props.setScene}>
+                <button className="webgl__infobtn" key={info.length} onClick={() => infoModel.chooseScene()}>
                     <h6 className="webgl__infobtn__caption">Подробнее</h6>
                 </button>
             );
@@ -92,18 +92,14 @@ function WebGLGetData(props) {
 function showModelInformation(event) {
     // Показываем пользователю значок загрузки
     defaulStateCallback(); 
-    // Поиск окна с информацией
-    const infoContainer = document.getElementById('WebGL-info'); 
     // Показываем пользователю окно с информацией
-    infoContainer.classList.remove('none'); 
-
+    infoModel.showInfo(); 
     // Модель по которой было совершено нажатие
     const target = event.target.parentObj.prototype; 
     // Комната, в которой расположена модель
     struct = target.parent;
-
     // Скрытие подсветки всех моделей в комнате
-    infoModel.hideModelsHightlights(struct);
+    infoModel.hideModelsHightlights();
     // Подсветка той модели, по которой было совершено нажатие
     target.showHightlight();
 
@@ -127,14 +123,13 @@ function showModelInformation(event) {
 function showFloorInformation(event) {
     defaulStateCallback();
 
-    const infoContainer = document.getElementById('WebGL-info');
-    infoContainer.classList.remove('none');
+    // Показываем пользователю окно с информацией
+    infoModel.showInfo(); 
 
     const target = event.target.parentObj;
-    const struct = target.parentObj;
-    infoModel.target = target;
+    infoModel.setTarget(target);
 
-    infoModel.hideModelsHightlights(struct);
+    infoModel.hideModelsHightlights();
     target.showHightlight();
 
     const buildingID = target.dbInfo.buildingID;
@@ -154,17 +149,14 @@ function showFloorInformation(event) {
 function showRoomInformation(event) {
     defaulStateCallback();
 
-    const infoContainer = document.getElementById('WebGL-info');
-    infoContainer.classList.remove('none');
+    // Показываем пользователю окно с информацией
+    infoModel.showInfo(); 
 
     const target = event.target;
-    const struct = target.parentObj;
-    infoModel.target = target;
+    infoModel.setTarget(target);
 
-    infoModel.hideModelsHightlights(struct);
-    struct.linkPoints.forEach(point => point.material.color.set(0x005000));
+    infoModel.hideLinkPoints();
     target.material.color.set(0xffffff);
-    console.log(struct);
 
     const roomID = target.dbID;
     fetch('http://server/roomData.php', {

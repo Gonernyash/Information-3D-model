@@ -39,10 +39,12 @@ class InfoModel {
     }
 
     async chooseScene(src) {
+        this.closeInfo();
         this.clearScene(); // Очищаем сцену
         this._initLights(); // Создаем источники света
+        if (!src) src = this._target.src;
         // С сервера запрашивается скрипт той или иной модели
-        const struct = await scriptInit(src);  
+        const struct = await scriptInit(src);
         this.selectStructure(struct); // Исполняем скрипт
         // Если это скрипт комнаты или этажа, показываем кнопку возвращения
         const currentModel = this.getCurrent();
@@ -158,8 +160,16 @@ class InfoModel {
         this._controls.enableZoom = false;
     }
 
+    showInfo() {
+        this._info.classList.remove('none');
+    }
+
     closeInfo() {
-        this._info.classList.add('none'); 
+        this._info.classList.add('none');
+        this.hideHightlight();
+    }
+
+    hideHightlight() {
         this.hideModelsHightlights();
         this.hideLinkPoints();
     }
@@ -191,6 +201,10 @@ class InfoModel {
         this._camera.position.set(this._cameraZoom, this._cameraZoom, this._cameraZoom);
     }
 
+    setTarget(target) {
+        this._target = target;
+    }
+
     getCurrent() {
         return this._current
     }
@@ -213,13 +227,13 @@ class InfoModel {
     }
 
     hideModelsHightlights() {
-        this._current.models.forEach(model => {
+        if (this._current) this._current.models.forEach(model => {
             model.hideHightlight();
         })
     }
 
     hideLinkPoints() {
-        this._current.linkPoints.forEach(point => point.material.color.set(0x005000));
+        if (this._current) this._current.linkPoints.forEach(point => point.material.color.set(0x005000));
     }
 
     addToScene() {
