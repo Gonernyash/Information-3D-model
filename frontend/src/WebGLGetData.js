@@ -2,7 +2,6 @@ import {useState, useEffect} from 'react';
 import {infoModel} from './WebGLOutput';
 import {Spinner} from 'react-bootstrap';
 
-let struct;
 let defaulStateCallback;
 let modelDataCallback;
 let floorDataCallback;
@@ -20,7 +19,7 @@ function WebGLGetData() {
         modelDataCallback = result => {
             if (result["refs"]) {
                 const refs = result["refs"].split(', ');
-                struct.models.forEach(model => {
+                infoModel._current.models.forEach(model => {
                     if (refs.indexOf(String(model.dbID)) > -1) {
                         model.showHightlight(0xff0000);
                     }
@@ -96,8 +95,6 @@ function showModelInformation(event) {
     infoModel.showInfo(); 
     // Модель по которой было совершено нажатие
     const target = event.target.parentObj.prototype; 
-    // Комната, в которой расположена модель
-    struct = target.parent;
     // Скрытие подсветки всех моделей в комнате
     infoModel.hideModelsHightlights();
     // Подсветка той модели, по которой было совершено нажатие
