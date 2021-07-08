@@ -1,31 +1,30 @@
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
 import './WebGLSearchInput.css';
 import {DropdownButton, Dropdown} from 'react-bootstrap';
 import WebGLSearchResultList from './WebGLSearchResultList';
+import { infoModel } from './WebGLOutput';
 
-const WebGLSearchInput = React.forwardRef((props, ref) => {
+function WebGLSearchInput() {
 
     const [title, setTitle] = useState('Что ищем?');
     const [table, setTable] = useState(null);
     const [resultItems, setResultItems] = useState(null);
 
-    const input = useRef(null);
-    const resultList = useRef(null);
-
     const selectItem = (key, event) => {
-        input.current.value = '';
-        resultList.current.classList.add('none');
+        infoModel._searchMenu.input.value = '';
+        infoModel._searchMenu.resultList.classList.add('none');
         setTitle(event.target.innerText);
         setTable(key);
     }
 
-    const searchData = (event, table) => {
+    const searchData = (table) => {
+        console.log(table);
         setResultItems(null);
-        const req = event.target.value;
+        const req = infoModel._searchMenu.input.value;
         if (req === '') {
-            resultList.current.classList.add('none');
+            infoModel._searchMenu.resultList.classList.add('none');
         } else {
-            resultList.current.classList.remove('none');
+            infoModel._searchMenu.resultList.classList.remove('none');
             fetch('http://server/search.php', {
                 method: 'POST',
                 headers: {
@@ -41,7 +40,7 @@ const WebGLSearchInput = React.forwardRef((props, ref) => {
     }
 
     return(
-        <div className="webgl-search__input-container" ref={ref} id="WebGl-inputContainer">
+        <div className="webgl-search__input-container" id="WebGl-Search__inputContainer">
             <DropdownButton
                 drop={'up'}
                 variant="secondary"
@@ -54,14 +53,14 @@ const WebGLSearchInput = React.forwardRef((props, ref) => {
                 <Dropdown.Item eventKey="rele" onSelect={(k, e) => selectItem(k, e)}>Реле</Dropdown.Item>
             </DropdownButton>
             <div className="webgl-search__input-inner">
-                <div id="webgl-resultList" className="webgl-search__result-list none" ref={resultList}>
+                <div id="WebGL-Search__resultList" className="webgl-search__result-list none">
                     <WebGLSearchResultList>{resultItems}</WebGLSearchResultList>
                 </div>
-                <input type="text" id="WebGl-input" className="h6 webgl-search__input" placeholder="Поиск..." ref={input} onInput={(event) => searchData(event, table)}></input>
+                <input type="text" id="WebGl-Search__input" className="h6 webgl-search__input" placeholder="Поиск..." onInput={() => searchData(table)}></input>
             </div>
         </div>
     );
-});
+};
 
 
 export default WebGLSearchInput;

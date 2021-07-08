@@ -36,6 +36,7 @@ class InfoModel {
 
         this._webglInit();
         this._webglStart();
+        console.log(this);
     }
 
     async chooseScene(src) {
@@ -64,7 +65,18 @@ class InfoModel {
         } 
         this._returnButton = document.getElementById('WebGL-ReturnButton');
         this._info = document.getElementById('WebGL-Info');
-        this._searchMenu = document.getElementById('WebGL-Search');
+        this._searchMenu = {
+           menu: document.getElementById('WebGL-Search'),
+           button: document.getElementById('WebGL-Search__button'),
+           icon: {
+               opened: document.getElementById('WebGL-Search__icon--opened'),
+               closed: document.getElementById('WebGL-Search__icon--closed')
+           },
+           inputContainer: document.getElementById('WebGl-Search__inputContainer'),
+           input: document.getElementById('WebGl-Search__input'),
+           resultList: document.getElementById('WebGL-Search__resultList'),
+           isOpen: false
+        };
         this._startButton = document.getElementById('WebGL-StartButton');
 
         this._sceneWidth = this._output.offsetWidth;
@@ -111,14 +123,14 @@ class InfoModel {
     modelStart() {
         this._blackout.classList.add('none'); // Скрытие затемнения
         this._startButton.classList.add('none'); // Скрытие кнопки "Пуск"
-        this._searchMenu.classList.remove('none'); // Показ кнопки поиска
+        this._searchMenu.menu.classList.remove('none'); // Показ кнопки поиска
         this.enableOrbitControls(); // Вкл. управления камерой с помощью мыши
     }
 
     modelStop() {
         this._blackout.classList.remove('none'); 
         this._startButton.classList.remove('none'); 
-        this._searchMenu.classList.add('none'); 
+        this._searchMenu.menu.classList.add('none'); 
         this.disableOrbitControls(); 
     }
 
@@ -167,6 +179,33 @@ class InfoModel {
     closeInfo() {
         this._info.classList.add('none');
         this.hideHightlight();
+    }
+
+    openSearchBar() {
+        this._searchMenu.icon.opened.classList.add('none');
+        this._searchMenu.icon.closed.classList.remove('none');
+
+        this._searchMenu.button.classList.add('webgl-search__button--opened');
+        this._searchMenu.inputContainer.classList.add('webgl-search__input-container--opened');
+
+        this._searchMenu.isOpen = true;
+    }
+
+    closeSearchBar() {
+        this._searchMenu.icon.opened.classList.remove('none');
+        this._searchMenu.icon.closed.classList.add('none');
+
+        this._searchMenu.button.classList.remove('webgl-search__button--opened');
+        this._searchMenu.inputContainer.classList.remove('webgl-search__input-container--opened');
+
+        this._searchMenu.resultList.classList.add('none');
+        this._searchMenu.input.value = '';
+
+        this._searchMenu.isOpen = false;
+    }
+
+    toggleSearchBar() {
+        this._searchMenu.isOpen ? this.closeSearchBar() : this.openSearchBar();
     }
 
     hideHightlight() {
