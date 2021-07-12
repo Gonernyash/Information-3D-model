@@ -1,4 +1,4 @@
-return async function script(infoModel, Room, toVector, showModelInformation, Model) {
+return async function script(infoModel, Room, toVector, Model) {
     // Размеры комнаты
     const roomSizeX = 27;
     const roomSizeY = 59.5;
@@ -29,7 +29,7 @@ return async function script(infoModel, Room, toVector, showModelInformation, Mo
         2, // Коэфф. вращения
         { // Параметры
             flipX: true, // Отразить модель по X 
-            events: {'click': showModelInformation} // Событие
+            events: {'click': infoModel.showModelInformation} // Событие
         },
         39 // ID модели в базе данных в таблице 'oborudovanie'
     );
@@ -45,7 +45,7 @@ return async function script(infoModel, Room, toVector, showModelInformation, Mo
         toVector(0, 40, 0), 
         3, 
         {
-            events: {'click': showModelInformation}
+            events: {'click': infoModel.showModelInformation}
         },
         36
     );

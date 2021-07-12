@@ -181,6 +181,127 @@ class InfoModel {
         this.hideHightlight();
     }
 
+    _formatFloorData(data) {
+        const info = [<h4 key={'table'} className="webgl__property webgl__heading">{data.shift()[0]}</h4>];
+        if (data.length === 0) {
+            info.push(<h6 key={0}>Комнаты не найдены</h6>);
+        } else {
+            info.push(<h6 key={-1}>Комнаты:</h6>);
+            const items = data.map((item, i) => <li key={i}><h6>{item[0]}</h6></li>);
+            info.push(<ul className="webgl__items-list" key={items.length}>{items}</ul>);
+        }
+        info.push(
+            <button className="webgl__infobtn" key={info.length} onClick={() => this.chooseScene()}>
+                <h6 className="webgl__infobtn__caption">Подробнее</h6>
+            </button>
+        );
+        return info;
+    }
+    
+    _formatRoomData(data) {
+        const info = [
+            <h4 key={0} className="webgl__property webgl__heading">Здание: {data[0]}</h4>,
+            <h4 key={1} className="webgl__property webgl__heading">Комната: {data[1]}</h4>,
+            <h5 key={2}>Описание:</h5>,
+            <h6 key={3}>{data[2]}</h6>
+        ];
+        info.push(
+            <button className="webgl__infobtn" key={info.length} onClick={() => this.chooseScene()}>
+                <h6 className="webgl__infobtn__caption">Подробнее</h6>
+            </button>
+        );
+        return info;
+    }
+
+    _formatModelData(data) {
+        if (data["refs"]) {
+            const refs = data["refs"].split(', ');
+            const current = this.getCurrent();
+            current.models.forEach(model => {
+                if (refs.indexOf(String(model.dbID)) > -1) {
+                    model.showHightlight(0xff0000);
+                }
+            })
+        }
+        
+        delete data["refs"];
+
+        const info = [<h4 key={'table'} className="webgl__property webgl__heading">{data["table"]}</h4>];
+        delete data["table"];
+        for (let prop in data) {
+            info.push(<h6 key={info.length}><span className="webgl__property">{prop}</span>{data[prop]}</h6>);
+        }
+        return info;
+    }
+
+    showModelInformation(target, setState) {
+        setState([]); // Показываем пользователю значок загрузки
+        this.showInfo(); // Показываем пользователю окно с информацией (Пока что пустое)
+        target = target.parentObj.prototype; // Модель по которой было совершено нажатие
+        this.hideModelsHightlights();// Скрытие подсветки всех моделей в комнате
+        target.showHightlight();// Подсветка той модели, по которой было совершено нажатие
+        const id = target.dbID; // id модели в БД
+
+        // Отправка запроса на сервер
+        fetch('http://server/modelData.php', {
+            method: 'POST', // Для отправки используем метод POST
+            headers: {
+                // Помечаем отправные ланные как данные с формы
+                'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: "id=" + id // Сами данные
+        }).then(res => res.json()) // Ответ декодируем из JSON
+        .then(res => {
+            const formatedData = this._formatModelData(res); // Форматируем
+            setState(formatedData); // Выводим информацию в окно
+        });
+    }
+
+    showRoomInformation(target, setState) {
+        setState([]);
+        this.showInfo(); // Показываем пользователю окно с информацией
+        this.setTarget(target);
+
+        this.hideLinkPoints();
+        target.material.color.set(0xffffff);
+
+        const roomID = target.dbID;
+        fetch('http://server/roomData.php', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: `room=${roomID}` 
+        }).then(res => res.json())
+        .then(res => {
+            const formatedData = this._formatRoomData(res); // Форматируем
+            setState(formatedData); // Выводим информацию в окно
+        });
+    }
+
+    showFloorInformation(target, setState) {
+        setState([]); // Показываем пользователю значок загрузки
+        this.showInfo(); // Показываем пользователю окно с информацией (Пока что пустое)
+        target = target.parentObj;
+        this.setTarget(target);
+        this.hideModelsHightlights();
+        target.showHightlight();
+
+        const buildingID = target.dbInfo.buildingID;
+        const floor = target.dbInfo.floor;
+        fetch('http://server/floorData.php', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: `building=${buildingID}&floor=${floor}` 
+        }).then(res => res.json())
+        .then(res => {
+            const formatedData = this._formatFloorData(res); // Форматируем
+            setState(formatedData); // Выводим информацию в окно
+        });
+    }
+
     openSearchBar() {
         this._searchMenu.icon.opened.classList.add('none');
         this._searchMenu.icon.closed.classList.remove('none');

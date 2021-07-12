@@ -1,4 +1,4 @@
-return async function script(Room, toVector, showRoomInformation) {
+return async function script(Room, toVector) {
     // Размеры этажа
     const roomSizeX = 90;
     const roomSizeY = 440;
@@ -284,7 +284,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(19, 380, roomSizeZ), // Расположение точки
         {
             events: { // События
-                'click': showRoomInformation // Вывод информации о комнате при клике
+                'click': infoModel.showRoomInformation // Вывод информации о комнате при клике
             },
             dbID: 1 // id комнаты в БД
         }
@@ -296,7 +296,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(19, 190, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 2
         }
@@ -308,7 +308,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(19, 90, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 3
         }
@@ -320,7 +320,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(75, 270, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 4
         }
@@ -332,7 +332,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(75, 140, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 5
         }
@@ -344,7 +344,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(75, 110, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 6
         }
@@ -356,7 +356,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(75, 70, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 7
         }
@@ -368,7 +368,7 @@ return async function script(Room, toVector, showRoomInformation) {
         toVector(75, 10, roomSizeZ),
         {
             events: {
-                'click': showRoomInformation
+                'click': infoModel.showRoomInformation
             },
             dbID: 8
         }
