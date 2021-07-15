@@ -1,19 +1,8 @@
 import * as THREE from 'three';
 import SpriteText from 'three-spritetext';
+import InfoModel from './InfoModel';
 import Model from './Model';
 import * as linkPointURL from '../link-point.png';
-
-function toVector(x, y, z) {
-    return {
-        x: x,
-        y: y,
-        z: z
-    }
-}
-
-function vectorToArr(obj) {
-    return [obj.x, obj.y, obj.z]
-}
 
 function toStructure(structArr) {
     const newStruct = new Structure();
@@ -29,13 +18,13 @@ function toStructure(structArr) {
 class Structure {
     constructor(sizeVector, posVector, color, opacity, options) {
         // Размеры постройки
-        this.size = sizeVector ? toVector(sizeVector.x, sizeVector.y, sizeVector.z) : toVector(0, 0, 0);
+        this.size = sizeVector ? InfoModel.toVector(sizeVector.x, sizeVector.y, sizeVector.z) : InfoModel.toVector(0, 0, 0);
         // Расположение постройки
-        this.position = posVector ? toVector(posVector.x, posVector.y, posVector.z) : toVector(0, 0, 0);
+        this.position = posVector ? InfoModel.toVector(posVector.x, posVector.y, posVector.z) : InfoModel.toVector(0, 0, 0);
         this.color = color; // Цвет
         this.opacity = opacity; // Непрозрачность
         this.wallThick = 0; // Толщина стен (по умолчнию)
-        this.center = toVector(0, 0, 0); // Центр постройки (по умолчнию)
+        this.center = InfoModel.toVector(0, 0, 0); // Центр постройки (по умолчнию)
         this.walls = []; // Массив стен
         this.doors = []; // Массив дверей
         this.windows = []; // Массив окон
@@ -358,4 +347,4 @@ class Structure {
 }
 
 export default Structure;
-export {toVector, vectorToArr, toStructure};
+export {toStructure};

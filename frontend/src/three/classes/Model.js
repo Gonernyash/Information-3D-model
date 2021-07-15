@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { toVector } from './Structure'
+import InfoModel from './InfoModel';
 
 class Model {
     constructor(src, parent) {
@@ -91,7 +91,7 @@ class Model {
         origSizeBox.getSize(origSize);
 
         // Находим scale, в который нужно возвести модель для соответствия заданным размерам
-        const scale = toVector(
+        const scale = InfoModel.toVector(
             this.size.x / origSize.x,
             this.size.y / origSize.y,
             this.size.z / origSize.z

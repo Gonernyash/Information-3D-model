@@ -99,7 +99,7 @@ class InfoModel {
 
     _webglRender() {
         if (this._current) {
-            this._camera.lookAt(...this.vectorToArr(this._current.center));
+            this._camera.lookAt(...InfoModel.vectorToArr(this._current.center));
         } else {
             this._camera.lookAt(0, 0, 0);
         }
@@ -407,7 +407,7 @@ class InfoModel {
         this._scene.clear();
     }
 
-    toVector(x, y, z) {
+    static toVector(x, y, z) {
         return {
             x: x,
             y: y,
@@ -415,7 +415,7 @@ class InfoModel {
         }
     }
 
-    vectorToArr(obj) {
+    static vectorToArr(obj) {
         return [obj.x, obj.y, obj.z]
     }
 }

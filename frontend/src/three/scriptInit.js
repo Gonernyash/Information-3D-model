@@ -1,6 +1,7 @@
 import Room from './classes/Room';
 import Model from './classes/Model';
-import {toVector, toStructure} from './classes/Structure';
+import InfoModel from './classes/InfoModel';
+import {toStructure} from './classes/Structure';
 import {showModelInformation, showFloorInformation, showRoomInformation} from '../WebGLGetData';
 import Building from './classes/Building';
 import {infoModel} from '../WebGLOutput';
@@ -26,7 +27,7 @@ function scriptInit(name) {
                         switch (arg) {
                             case 'Room': return Room;
                             case 'Building': return Building;
-                            case 'toVector': return toVector;
+                            case 'toVector': return InfoModel.toVector;
                             case 'showModelInformation': return showModelInformation;
                             case 'showFloorInformation': return showFloorInformation;
                             case 'showRoomInformation': return showRoomInformation;

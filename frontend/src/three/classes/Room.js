@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import Structure, {toVector} from './Structure';
+import InfoModel from './InfoModel';
+import Structure from './Structure';
 import Model from './Model';
 
 class Room extends Structure {
@@ -32,7 +33,7 @@ class Room extends Structure {
         const walls = [
         // Основание
         this.drawBox(
-            toVector(
+            InfoModel.toVector(
                 this.size.x + this.wallThick * 2,
                 this.size.y + this.wallThick * 2,
                 this.wallThick
@@ -43,12 +44,12 @@ class Room extends Structure {
 
         // Стена по X #1 
         this.drawBox(
-            toVector(
+            InfoModel.toVector(
                 this.wallThick,
                 this.size.y + this.wallThick * 2,
                 this.size.z
             ),
-            toVector(
+            InfoModel.toVector(
                 this.position.x,
                 this.position.y,
                 this.position.z + this.wallThick
@@ -58,12 +59,12 @@ class Room extends Structure {
 
         // Стена по X #2
         this.drawBox(
-            toVector(
+            InfoModel.toVector(
                 this.wallThick,
                 this.size.y + this.wallThick * 2,
                 this.size.z
             ),
-            toVector(
+            InfoModel.toVector(
                 this.position.x + this.size.x + this.wallThick,
                 this.position.y,
                 this.position.z + this.wallThick
@@ -73,12 +74,12 @@ class Room extends Structure {
 
         // Стена по Y #1 
         this.drawBox(
-            toVector(
+            InfoModel.toVector(
                 this.size.x,
                 this.wallThick,
                 this.size.z
             ),
-            toVector(
+            InfoModel.toVector(
                 this.position.x + this.wallThick,
                 this.position.y,
                 this.position.z + this.wallThick
@@ -88,12 +89,12 @@ class Room extends Structure {
 
         // Стена по Y #2
         this.drawBox(
-            toVector(
+            InfoModel.toVector(
                 this.size.x,
                 this.wallThick,
                 this.size.z
             ),
-            toVector(
+            InfoModel.toVector(
                 this.position.x + this.wallThick,
                 this.position.y + this.size.y + this.wallThick,
                 this.position.z + this.wallThick
@@ -139,12 +140,12 @@ class Room extends Structure {
             for (let i = 0; i < xLineCount; i++) {
                 nmb++;
                 this.grid.push(this.drawLine(
-                    toVector(
+                    InfoModel.toVector(
                         pos.x + i * tileSize,
                         pos.y,
                         pos.z+zee*tileSize	
                     ),
-                    toVector(
+                    InfoModel.toVector(
                         pos.x + i * tileSize,
                         gridSize.y + pos.y,
                         pos.z+zee*tileSize	
@@ -154,12 +155,12 @@ class Room extends Structure {
             for (let i = 0; i < yLineCount; i++) {
                 nmb++;
                 this.grid.push(this.drawLine(
-                    toVector(
+                    InfoModel.toVector(
                         pos.x,
                         pos.y + i * tileSize,
                         pos.z+zee*tileSize	
                     ),
-                    toVector(
+                    InfoModel.toVector(
                         gridSize.x + pos.x,
                         pos.y + i * tileSize,
                         pos.z+zee*tileSize	
@@ -171,12 +172,12 @@ class Room extends Structure {
         for (let y = 0; y < yLineCount; y++) {
             nmb++;
             this.grid.push(this.drawLine(
-				toVector(
+				InfoModel.toVector(
 					pos.x + x * tileSize,
 					pos.y + y * tileSize,
 					pos.z	
 				),
-				toVector(
+				InfoModel.toVector(
 					pos.x + x * tileSize,
 					pos.y + y * tileSize,
 					pos.z+gridSize.z
@@ -190,28 +191,28 @@ class Room extends Structure {
     setMainGrid(wallWidth) {
         this.drawGrid(
             10, 
-            toVector(this.size.x, this.size.y, 0), 
-            toVector(wallWidth, wallWidth, wallWidth)
+            InfoModel.toVector(this.size.x, this.size.y, 0), 
+            InfoModel.toVector(wallWidth, wallWidth, wallWidth)
         );
         this.drawGrid(
             10, 
-            toVector(0, this.size.y, this.size.z), 
-            toVector(wallWidth, wallWidth, wallWidth)
+            InfoModel.toVector(0, this.size.y, this.size.z), 
+            InfoModel.toVector(wallWidth, wallWidth, wallWidth)
         );
         this.drawGrid(
             10, 
-            toVector(0, this.size.y, this.size.z), 
-            toVector(wallWidth + this.size.x, wallWidth, wallWidth)
+            InfoModel.toVector(0, this.size.y, this.size.z), 
+            InfoModel.toVector(wallWidth + this.size.x, wallWidth, wallWidth)
         );
         this.drawGrid(
             10, 
-            toVector(this.size.x, 0, this.size.z), 
-            toVector(wallWidth, wallWidth, wallWidth)
+            InfoModel.toVector(this.size.x, 0, this.size.z), 
+            InfoModel.toVector(wallWidth, wallWidth, wallWidth)
         );
         this.drawGrid(
             10, 
-            toVector(this.size.x, 0, this.size.z), 
-            toVector(wallWidth, wallWidth + this.size.y, wallWidth)
+            InfoModel.toVector(this.size.x, 0, this.size.z), 
+            InfoModel.toVector(wallWidth, wallWidth + this.size.y, wallWidth)
         );
     }
 
