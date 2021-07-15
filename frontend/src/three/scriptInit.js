@@ -1,7 +1,6 @@
 import Room from './classes/Room';
 import Model from './classes/Model';
 import InfoModel from './classes/InfoModel';
-import {toStructure} from './classes/Structure';
 import {showModelInformation, showFloorInformation, showRoomInformation} from '../WebGLGetData';
 import Building from './classes/Building';
 import {infoModel} from '../WebGLOutput';
@@ -32,7 +31,7 @@ function scriptInit(name) {
                             case 'showFloorInformation': return showFloorInformation;
                             case 'showRoomInformation': return showRoomInformation;
                             case 'infoModel': return infoModel;
-                            case 'toStructure': return toStructure;
+                            case 'toStructure': return InfoModel.toStructure;
                             case 'Model': return Model;
                             default: return null;
                         }

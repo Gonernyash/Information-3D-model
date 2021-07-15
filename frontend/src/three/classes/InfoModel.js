@@ -3,6 +3,7 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 import {Interaction} from 'three.interaction';
 import {GUIInit} from '../GUI';
 import scriptInit from '../scriptInit';
+import Structure from './Structure';
 
 class InfoModel {
 // Объявление свойств
@@ -417,6 +418,17 @@ class InfoModel {
 
     static vectorToArr(obj) {
         return [obj.x, obj.y, obj.z]
+    }
+
+    static toStructure(structArr) {
+        const newStruct = new Structure();
+        structArr.forEach(struct => {
+            const objects = struct.getObjects();
+            objects.forEach(obj => newStruct.objects.push(obj));
+            struct.parentObj = newStruct;
+            if (struct.events) newStruct.models.push(struct);
+        });
+        return newStruct
     }
 }
 

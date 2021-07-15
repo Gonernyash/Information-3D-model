@@ -4,17 +4,6 @@ import InfoModel from './InfoModel';
 import Model from './Model';
 import * as linkPointURL from '../link-point.png';
 
-function toStructure(structArr) {
-    const newStruct = new Structure();
-    structArr.forEach(struct => {
-        const objects = struct.getObjects();
-        objects.forEach(obj => newStruct.objects.push(obj));
-        struct.parentObj = newStruct;
-        if (struct.events) newStruct.models.push(struct);
-    });
-    return newStruct
-}
-
 class Structure {
     constructor(sizeVector, posVector, color, opacity, options) {
         // Размеры постройки
@@ -347,4 +336,3 @@ class Structure {
 }
 
 export default Structure;
-export {toStructure};
