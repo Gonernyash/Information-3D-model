@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import InfoModel from './InfoModel';
 import Structure from './Structure';
 import Model from './Model';
@@ -8,213 +7,223 @@ class Room extends Structure {
         super(sizeVector, posVector, color, opacity, params);
 
         //Толщина стен
-        this.wallThick = wallThick;
+        this._wallThick = wallThick;
 
-/*
-            Walls ID:
-			                         
-                                  X
-                   1              ^ 
-          __|______________|__    |
-            |              |      |
-            |              |      |
-          4 |              | 2    | 
-            |              |      |
-            |              |      |
-          __|______________|__    |
-            |              |      |
-                   3              |
-                                  |
-	  Y <-------------------------|-----
-			                      |   
-*/
+        this._wallsInit();
+
+        // Сетка
+		this._grid = [];
+
+        this._outline = [this._walls, this._doors, this._windows];
+    }
+
+    _wallsInit() {
+
+        const size = this.getSize();
+        const wallThick = this.getWallThickness();
+        const position = this.getPosition();
+        const color = this.getColor();
+
+        /*
+                Walls ID:
+                                        
+                                      X
+                        1             ^ 
+              __|______________|__    |
+                |              |      |
+                |              |      |
+            4   |              | 2    | 
+                |              |      |
+                |              |      |
+              __|______________|__    |
+                |              |      |
+                        3             |
+                                      |
+        Y <---------------------------|-----
+                                      |   
+        */
 
         //Стены
         const walls = [
-        // Основание
-        this.drawBox(
-            InfoModel.toVector(
-                this.size.x + this.wallThick * 2,
-                this.size.y + this.wallThick * 2,
-                this.wallThick
+            // Основание
+            this.drawBox(
+                InfoModel.toVector(
+                    size.x + wallThick * 2,
+                    size.y + wallThick * 2,
+                    wallThick
+                ),
+                position,
+                color
             ),
-            this.position,
-            this.color
-        ),
-
-        // Стена по X #1 
-        this.drawBox(
-            InfoModel.toVector(
-                this.wallThick,
-                this.size.y + this.wallThick * 2,
-                this.size.z
+    
+            // Стена по X #1 
+            this.drawBox(
+                InfoModel.toVector(
+                    wallThick,
+                    size.y + wallThick * 2,
+                    size.z
+                ),
+                InfoModel.toVector(
+                    position.x,
+                    position.y,
+                    position.z + wallThick
+                ),
+                color
             ),
-            InfoModel.toVector(
-                this.position.x,
-                this.position.y,
-                this.position.z + this.wallThick
+    
+            // Стена по X #2
+            this.drawBox(
+                InfoModel.toVector(
+                    wallThick,
+                    size.y + wallThick * 2,
+                    size.z
+                ),
+                InfoModel.toVector(
+                    position.x + size.x + wallThick,
+                    position.y,
+                    position.z + wallThick
+                ),
+                color
             ),
-            this.color
-        ),
-
-        // Стена по X #2
-        this.drawBox(
-            InfoModel.toVector(
-                this.wallThick,
-                this.size.y + this.wallThick * 2,
-                this.size.z
+    
+            // Стена по Y #1 
+            this.drawBox(
+                InfoModel.toVector(
+                    size.x,
+                    wallThick,
+                    size.z
+                ),
+                InfoModel.toVector(
+                    position.x + wallThick,
+                    position.y,
+                    position.z + wallThick
+                ),
+                color
             ),
-            InfoModel.toVector(
-                this.position.x + this.size.x + this.wallThick,
-                this.position.y,
-                this.position.z + this.wallThick
-            ),
-            this.color
-        ),
-
-        // Стена по Y #1 
-        this.drawBox(
-            InfoModel.toVector(
-                this.size.x,
-                this.wallThick,
-                this.size.z
-            ),
-            InfoModel.toVector(
-                this.position.x + this.wallThick,
-                this.position.y,
-                this.position.z + this.wallThick
-            ),
-            this.color
-        ),
-
-        // Стена по Y #2
-        this.drawBox(
-            InfoModel.toVector(
-                this.size.x,
-                this.wallThick,
-                this.size.z
-            ),
-            InfoModel.toVector(
-                this.position.x + this.wallThick,
-                this.position.y + this.size.y + this.wallThick,
-                this.position.z + this.wallThick
-            ),
-            this.color
-            )
-        ];
-        this.walls.forEach(wall => wall.name = "main-wall");
-        this.walls.push(...walls);
-
-        // Сетка
-		this.grid = [];
-
-        this.outline = [this.walls, this.doors, this.windows];
+    
+            // Стена по Y #2
+            this.drawBox(
+                InfoModel.toVector(
+                    size.x,
+                    wallThick,
+                    size.z
+                ),
+                InfoModel.toVector(
+                    position.x + wallThick,
+                    position.y + size.y + wallThick,
+                    position.z + wallThick
+                ),
+                color
+                )
+            ];
+            this._walls.forEach(wall => wall.name = "main-wall");
+            this._walls.push(...walls);
     }
 
-	drawLine(vector1, vector2) {
-		const material = new THREE.LineBasicMaterial({color: 0xff0000});
-		const points = [
-			{
-				x: vector1.y,
-				y: vector1.z,
-				z: vector1.x
-			}, 
-			{
-				x: vector2.y,
-				y: vector2.z,
-				z: vector2.x
-			}
-		];
-		const geometry = new THREE.BufferGeometry().setFromPoints(points);
-		const line = new THREE.Line( geometry, material );
-        line.visible = false;
-		return line;
-	}
+	// drawLine(vector1, vector2) {
+	// 	const material = new THREE.LineBasicMaterial({color: 0xff0000});
+	// 	const points = [
+	// 		{
+	// 			x: vector1.y,
+	// 			y: vector1.z,
+	// 			z: vector1.x
+	// 		}, 
+	// 		{
+	// 			x: vector2.y,
+	// 			y: vector2.z,
+	// 			z: vector2.x
+	// 		}
+	// 	];
+	// 	const geometry = new THREE.BufferGeometry().setFromPoints(points);
+	// 	const line = new THREE.Line( geometry, material );
+    //     line.visible = false;
+	// 	return line;
+	// }
 
-	drawGrid(tileSize, gridSize, pos) {
-        let nmb=0;
-		const xLineCount = Math.floor(gridSize.x / tileSize) + 1; 
-		const yLineCount = Math.floor(gridSize.y / tileSize) + 1;
-		const zLineCount = Math.floor(gridSize.z / tileSize) + 1;
-		for (let zee = 0; zee< zLineCount; zee++){
-            for (let i = 0; i < xLineCount; i++) {
-                nmb++;
-                this.grid.push(this.drawLine(
-                    InfoModel.toVector(
-                        pos.x + i * tileSize,
-                        pos.y,
-                        pos.z+zee*tileSize	
-                    ),
-                    InfoModel.toVector(
-                        pos.x + i * tileSize,
-                        gridSize.y + pos.y,
-                        pos.z+zee*tileSize	
-                    )
-                ));
-            }
-            for (let i = 0; i < yLineCount; i++) {
-                nmb++;
-                this.grid.push(this.drawLine(
-                    InfoModel.toVector(
-                        pos.x,
-                        pos.y + i * tileSize,
-                        pos.z+zee*tileSize	
-                    ),
-                    InfoModel.toVector(
-                        gridSize.x + pos.x,
-                        pos.y + i * tileSize,
-                        pos.z+zee*tileSize	
-                    )
-                ));
-            }
-	    }
-    for (let x = 0; x < xLineCount; x++) {
-        for (let y = 0; y < yLineCount; y++) {
-            nmb++;
-            this.grid.push(this.drawLine(
-				InfoModel.toVector(
-					pos.x + x * tileSize,
-					pos.y + y * tileSize,
-					pos.z	
-				),
-				InfoModel.toVector(
-					pos.x + x * tileSize,
-					pos.y + y * tileSize,
-					pos.z+gridSize.z
-				)
-			));
-        }
-    }
-    return nmb;
-	}
+	// drawGrid(tileSize, gridSize, pos) {
+    //     let nmb=0;
+	// 	const xLineCount = Math.floor(gridSize.x / tileSize) + 1; 
+	// 	const yLineCount = Math.floor(gridSize.y / tileSize) + 1;
+	// 	const zLineCount = Math.floor(gridSize.z / tileSize) + 1;
+	// 	for (let zee = 0; zee< zLineCount; zee++){
+    //         for (let i = 0; i < xLineCount; i++) {
+    //             nmb++;
+    //             this._grid.push(this.drawLine(
+    //                 InfoModel.toVector(
+    //                     pos.x + i * tileSize,
+    //                     pos.y,
+    //                     pos.z+zee*tileSize	
+    //                 ),
+    //                 InfoModel.toVector(
+    //                     pos.x + i * tileSize,
+    //                     gridSize.y + pos.y,
+    //                     pos.z+zee*tileSize	
+    //                 )
+    //             ));
+    //         }
+    //         for (let i = 0; i < yLineCount; i++) {
+    //             nmb++;
+    //             this._grid.push(this.drawLine(
+    //                 InfoModel.toVector(
+    //                     pos.x,
+    //                     pos.y + i * tileSize,
+    //                     pos.z+zee*tileSize	
+    //                 ),
+    //                 InfoModel.toVector(
+    //                     gridSize.x + pos.x,
+    //                     pos.y + i * tileSize,
+    //                     pos.z+zee*tileSize	
+    //                 )
+    //             ));
+    //         }
+	//     }
+    // for (let x = 0; x < xLineCount; x++) {
+    //     for (let y = 0; y < yLineCount; y++) {
+    //         nmb++;
+    //         this._grid.push(this.drawLine(
+	// 			InfoModel.toVector(
+	// 				pos.x + x * tileSize,
+	// 				pos.y + y * tileSize,
+	// 				pos.z	
+	// 			),
+	// 			InfoModel.toVector(
+	// 				pos.x + x * tileSize,
+	// 				pos.y + y * tileSize,
+	// 				pos.z+gridSize.z
+	// 			)
+	// 		));
+    //     }
+    // }
+    // return nmb;
+	// }
 
-    setMainGrid(wallWidth) {
-        this.drawGrid(
-            10, 
-            InfoModel.toVector(this.size.x, this.size.y, 0), 
-            InfoModel.toVector(wallWidth, wallWidth, wallWidth)
-        );
-        this.drawGrid(
-            10, 
-            InfoModel.toVector(0, this.size.y, this.size.z), 
-            InfoModel.toVector(wallWidth, wallWidth, wallWidth)
-        );
-        this.drawGrid(
-            10, 
-            InfoModel.toVector(0, this.size.y, this.size.z), 
-            InfoModel.toVector(wallWidth + this.size.x, wallWidth, wallWidth)
-        );
-        this.drawGrid(
-            10, 
-            InfoModel.toVector(this.size.x, 0, this.size.z), 
-            InfoModel.toVector(wallWidth, wallWidth, wallWidth)
-        );
-        this.drawGrid(
-            10, 
-            InfoModel.toVector(this.size.x, 0, this.size.z), 
-            InfoModel.toVector(wallWidth, wallWidth + this.size.y, wallWidth)
-        );
-    }
+    // setMainGrid(wallWidth) {
+    //     this.drawGrid(
+    //         10, 
+    //         InfoModel.toVector(this.size.x, this.size.y, 0), 
+    //         InfoModel.toVector(wallWidth, wallWidth, wallWidth)
+    //     );
+    //     this.drawGrid(
+    //         10, 
+    //         InfoModel.toVector(0, this.size.y, this.size.z), 
+    //         InfoModel.toVector(wallWidth, wallWidth, wallWidth)
+    //     );
+    //     this.drawGrid(
+    //         10, 
+    //         InfoModel.toVector(0, this.size.y, this.size.z), 
+    //         InfoModel.toVector(wallWidth + this.size.x, wallWidth, wallWidth)
+    //     );
+    //     this.drawGrid(
+    //         10, 
+    //         InfoModel.toVector(this.size.x, 0, this.size.z), 
+    //         InfoModel.toVector(wallWidth, wallWidth, wallWidth)
+    //     );
+    //     this.drawGrid(
+    //         10, 
+    //         InfoModel.toVector(this.size.x, 0, this.size.z), 
+    //         InfoModel.toVector(wallWidth, wallWidth + this.size.y, wallWidth)
+    //     );
+    // }
 
     // Загрузка внешней модели
     drawModel(src, sizeVector, posVector, rotation, options, dbID) {
@@ -226,12 +235,13 @@ class Room extends Structure {
                 model.clone(src); // Копируем его
                 // И инициализируем с новыми параметрами
                 model.init(src, sizeVector, posVector, rotation, options, dbID);
-                this.models.push(model); // Добавляем модель в массив "модели"
+                console.log(model);
+                this.addModel(model); // Добавляем модель в массив "модели"
                 // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
-                this.objects.push(model.obj); // Непосредственно объект
+                this.addObject(model.obj); // Непосредственно объект
                 // Куб для взаимодействия с моделью при помощи мыши
-                this.objects.push(model.interactionCube); 
-                this.objects.push(model.hightlight); // Подсветка модели
+                this.addObject(model.interactionCube); 
+                this.addObject(model.hightlight); // Подсветка модели
                 return model; // Возвращаем модель
         } else {
             // Если же в качестве аргумента "src" указан путь к внешнему файлу, то
@@ -241,12 +251,13 @@ class Room extends Structure {
                 model.load().then(() => { 
                     // Инициализация
                     model.init(null, sizeVector, posVector, rotation, options, dbID);
-                    this.models.push(model); // Добавляем модель в массив "модели"
+                    console.log(model);
+                    this.addModel(model); // Добавляем модель в массив "модели"
                     // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
-                    this.objects.push(model.obj); // Непосредственно объект
+                    this.addObject(model.obj); // Непосредственно объект
                     // Куб для взаимодействия с моделью при помощи мыши
-                    this.objects.push(model.interactionCube);
-                    this.objects.push(model.hightlight); // Подсветка модели
+                    this.addObject(model.interactionCube);
+                    this.addObject(model.hightlight); // Подсветка модели
                     resolve(model); // Возвращаем модель
                 })
             });

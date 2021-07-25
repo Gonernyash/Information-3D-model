@@ -44,7 +44,11 @@ class InfoModel {
         this.closeInfo();
         this.clearScene(); // Очищаем сцену
         this._initLights(); // Создаем источники света
-        if (!src) src = this._target.src;
+        if (!src) {
+            const target = this.getTarget();
+            console.log(target);
+            src = target.src || target._src;
+        }
         // С сервера запрашивается скрипт той или иной модели
         const struct = await scriptInit(src);
         this.selectStructure(struct); // Исполняем скрипт
@@ -100,7 +104,7 @@ class InfoModel {
 
     _webglRender() {
         if (this._current) {
-            this._camera.lookAt(...InfoModel.vectorToArr(this._current.center));
+            this._camera.lookAt(...InfoModel.vectorToArr(this._current.getCenter()));
         } else {
             this._camera.lookAt(0, 0, 0);
         }
@@ -244,7 +248,7 @@ class InfoModel {
         const id = target.dbID; // id модели в БД
 
         // Отправка запроса на сервер
-        fetch('http://server/modelData.php', {
+        fetch('http://backend/modelData.php', {
             method: 'POST', // Для отправки используем метод POST
             headers: {
                 // Помечаем отправные ланные как данные с формы
@@ -267,7 +271,7 @@ class InfoModel {
         target.material.color.set(0xffffff);
 
         const roomID = target.dbID;
-        fetch('http://server/roomData.php', {
+        fetch('http://backend/roomData.php', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -290,7 +294,7 @@ class InfoModel {
 
         const buildingID = target.dbInfo.buildingID;
         const floor = target.dbInfo.floor;
-        fetch('http://server/floorData.php', {
+        fetch('http://backend/floorData.php', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -366,6 +370,10 @@ class InfoModel {
         this._target = target;
     }
 
+    getTarget() {
+        return this._target;
+    }
+
     getCurrent() {
         return this._current
     }
@@ -383,18 +391,18 @@ class InfoModel {
         // Получаем объекты, сгенерированные скриптом
         this._objects.push(...struct.getObjects()); 
         // Если были загружены внешние модели, переносим их в отдельный массив
-        if (struct._models) this._models.push(...struct._models);
+        if (struct._models) this._models.push(...struct.getModels());
         this._current = struct; // Указываем активную структуру
     }
 
     hideModelsHightlights() {
-        if (this._current) this._current.models.forEach(model => {
-            model.hideHightlight();
-        })
+        const current = this.getCurrent();
+        if (current) current.hideModelsHightlights();
     }
 
     hideLinkPoints() {
-        if (this._current) this._current.linkPoints.forEach(point => point.material.color.set(0x005000));
+        const current = this.getCurrent();
+        if (current) current.hideLinkPoints();
     }
 
     addToScene() {
@@ -424,9 +432,10 @@ class InfoModel {
         const newStruct = new Structure();
         structArr.forEach(struct => {
             const objects = struct.getObjects();
-            objects.forEach(obj => newStruct.objects.push(obj));
+            objects.forEach(obj => newStruct.addObject(obj));
             struct.parentObj = newStruct;
-            if (struct.events) newStruct.models.push(struct);
+            const events = struct.getEvents();
+            if (events) newStruct.addModel(struct);
         });
         return newStruct
     }

@@ -1,41 +1,139 @@
 import * as THREE from 'three';
 import SpriteText from 'three-spritetext';
 import InfoModel from './InfoModel';
-import Model from './Model';
 import * as linkPointURL from '../link-point.png';
 
 class Structure {
+
+    _size = {};
+    _position = {};
+    _color = '';
+    _opacity = 0;
+    _wallThick = 0; // Толщина стен (по умолчнию)
+    _center = {}; // Центр постройки (по умолчнию)
+    _walls = []; // Массив стен
+    _doors = []; // Массив дверей
+    _windows = []; // Массив окон
+    _linkPoints = []; // Массив точек-ссылок
+    _linkText = []; // Массив ссылочных текстов
+    _models = []; // Массив загружаемых моделей
+    _outline = []; // Массив контуров постройки
+    _hightlight = null;
+    _interactionCube = null;
+
+    // Этот массив будет содержать все вышеперечисленные объекты
+    // И будет использоватьтся на этапе отрисовки
+    _objects = []; 
+
     constructor(sizeVector, posVector, color, opacity, options) {
         // Размеры постройки
-        this.size = sizeVector ? InfoModel.toVector(sizeVector.x, sizeVector.y, sizeVector.z) : InfoModel.toVector(0, 0, 0);
+        this._size = sizeVector ? InfoModel.toVector(sizeVector.x, sizeVector.y, sizeVector.z) : InfoModel.toVector(0, 0, 0);
         // Расположение постройки
-        this.position = posVector ? InfoModel.toVector(posVector.x, posVector.y, posVector.z) : InfoModel.toVector(0, 0, 0);
-        this.color = color; // Цвет
-        this.opacity = opacity; // Непрозрачность
-        this.wallThick = 0; // Толщина стен (по умолчнию)
-        this.center = InfoModel.toVector(0, 0, 0); // Центр постройки (по умолчнию)
-        this.walls = []; // Массив стен
-        this.doors = []; // Массив дверей
-        this.windows = []; // Массив окон
-        this.linkPoints = []; // Массив точек-ссылок
-        this.linkText = []; // Массив ссылочных текстов
-        this.models = []; // Массив загружаемых моделей
-        this.outline = []; // Массив контуров постройки
-
-        // Этот массив будет содержать все вышеперечисленные объекты
-        // И будет использоватьтся на этапе отрисовки
-        this.objects = []; 
-
+        this._position = posVector ? InfoModel.toVector(posVector.x, posVector.y, posVector.z) : InfoModel.toVector(0, 0, 0);
+        this._color = color; // Цвет
+        this._opacity = opacity; // Непрозрачность
+       
         // Опциональные параметры
-        this.options = options ?? {}; // Обработка параметров
-        this.events = this.options.events ?? null; // События
-        this.dbInfo = this.options.dbInfo ?? null; // id для связи с БД
-        this.src = this.options.src ?? null; // Ссылка на внешний файл
+        this._options = options ?? {}; // Обработка параметров
+        this._events = this._options.events ?? null; // События
+        this._dbInfo = this._options.dbInfo ?? null; // id для связи с БД
+        this._src = this._options.src ?? null; // Ссылка на внешний файл
+    }
+
+    getObjectsArr() {
+        return this._objects;
+    }
+
+    getModels() {
+        return this._models;
+    }
+
+    getCenter() {
+        return this._center;
+    }
+
+    getOpacity() {
+        return this._opacity;
+    }
+
+    getPosition() {
+        return this._position;
+    }
+
+    getSize() {
+        return this._size;
+    }
+
+    getWallThickness() {
+        return this._wallThick;
+    }
+
+    getHightlight() {
+        return this._hightlight;
+    }
+
+    getOutlineObjects() {
+        return this._outline;
+    }
+
+    getDBInfo() {
+        return this._dbInfo;
+    }
+
+    getLinkPoints() {
+        return this._linkPoints;
+    }
+
+    getColor() {
+        return this._color;
+    }
+
+    getEvents() {
+        return this._events;
+    }
+
+    getSrc() {
+        return this._src;
+    }
+
+    addObject(obj) {
+        this._objects.push(obj);
+    }
+
+    addModel(model) {
+        this._models.push(model);
+    }
+
+    _addWall(wall) {
+        wall.name = "wall";
+        this._walls.push(wall);
+        this.addObject(wall);
+    }
+
+    _addDoor(door) {
+        door.name = "door";
+        this._doors.push(door);
+        this.addObject(door);
+    }
+
+    _addWindow(window) {
+        window.name = "window";
+        this._windows.push(window);
+        this.addObject(window);
+    }
+
+    _addLinkPoint(point, caption) {
+        point.name = "link-point";
+        caption.name = "link-point-caption";
+        this._linkPoints.push(point);
+        this.addObject(point);
+        this._linkText.push(caption);
+        this.addObject(caption);
     }
 
     drawBox(sizeVector, posVector, color, opacity) {
         const boxGeometry = new THREE.BoxGeometry(sizeVector.y, sizeVector.z, sizeVector.x);
-        const boxMaterial = new THREE.LineBasicMaterial({color: color, transparent: true, opacity: opacity ?? this.opacity});
+        const boxMaterial = new THREE.LineBasicMaterial({color: color, transparent: true, opacity: opacity ?? this.getOpacity()});
         const box = new THREE.Mesh(boxGeometry, boxMaterial);
         box.position.set(
             posVector.y + sizeVector.y / 2,
@@ -43,143 +141,141 @@ class Structure {
             posVector.x + sizeVector.x / 2
         ) 
         box.name = "box";
-        this.objects.push(box);
+        this.addObject(box);
         return box;
     }
 
     drawWall(sizeVector, posVector, color) {
-        console.log(this.walls);
         const wall = this.drawBox(sizeVector, posVector, color);
-        wall.name = "additional-wall";
-		this.walls.push(wall);
-        this.objects.push(wall);
-	}
+        this._addWall(wall);   
+    }
 
     drawDoor(width, height, pos, wallID) {
-        // !wallID можно найти в объявлении this.walls в конструкторе
+        // !wallID можно найти в объявлении this._walls в конструкторе
+        const structPos = this.getPosition();
+        const structSize = this.getSize();
+        const wallThick = this.getWallThickness();
         const doorBulge = 0.4;
         let doorSize;
         let doorPos;
         switch (wallID) {
             case 1:
                 doorSize = {
-                    x: this.wallThick + doorBulge,
+                    x: wallThick + doorBulge,
                     y: width,
                     z: height 
                 }  
                 doorPos = {
-                    x: this.position.x - doorBulge / 2,
-                    y: this.position.y + pos + this.wallThick,
-                    z: this.wallThick
+                    x: structPos.x - doorBulge / 2,
+                    y: structPos.y + pos + wallThick,
+                    z: wallThick
                 }    
             break;
             case 2:
                 doorSize = {
                     x: width,
-                    y: this.wallThick + doorBulge,
+                    y: wallThick + doorBulge,
                     z: height 
                 }     
                 doorPos = {
-                    x: this.position.x + pos + this.wallThick,
-                    y: this.position.y + this.size.y + this.wallThick - doorBulge / 2,
-                    z: this.wallThick
+                    x: structPos.x + pos + wallThick,
+                    y: structPos.y + structSize.y + wallThick - doorBulge / 2,
+                    z: wallThick
                 }  
             break;
             case 3:
                 doorSize = {
-                    x: this.wallThick + doorBulge,
+                    x: wallThick + doorBulge,
                     y: width,
                     z: height 
                 }     
                 doorPos = {
-                    x: this.position.x + this.size.x + this.wallThick - doorBulge / 2,
-                    y: this.position.y + pos + this.wallThick,
-                    z: this.wallThick
+                    x: structPos.x + structSize.x + wallThick - doorBulge / 2,
+                    y: structPos.y + pos + wallThick,
+                    z: wallThick
                 } 
             break;
             case 4:  
                 doorSize = {
                     x: width,
-                    y: this.wallThick + doorBulge,
+                    y: wallThick + doorBulge,
                     z: height 
                 }
                 doorPos = {
-                    x: this.position.x + pos + this.wallThick,
-                    y: this.position.y - doorBulge / 2,
-                    z: this.wallThick
+                    x: structPos.x + pos + wallThick,
+                    y: structPos.y - doorBulge / 2,
+                    z: wallThick
                 }  
             break;
-            default: console.error('Wrong wallID in drawDoor function');
+            default: console.error('Wrong wallID value in drawDoor function');
         } 
 
-
         const door = this.drawBox(doorSize, doorPos, 0x4f3b03, 0.5);
-        door.name = "door";
-        this.doors.push(door);
-        this.objects.push(door);
+        this._addDoor(door);
     }
 
 	drawWindow(width, height, pos, top, wallID) {
-		// !wallID можно найти в объявлении this.walls в конструкторе
+		// !wallID можно найти в объявлении this._walls в конструкторе
+        const structPos = this.getPosition();
+        const structSize = this.getSize();
+        const wallThick = this.getWallThickness();
         const windowBulge = 0.4;
         let windowSize;
         let windowPos;
         switch (wallID) {
             case 1:
                 windowSize = {
-                    x: this.wallThick + windowBulge,
+                    x: wallThick + windowBulge,
                     y: width,
                     z: height 
                 }  
 				windowPos = {
-					x: this.position.x - windowBulge / 2,
-					y: this.position.y + pos + this.wallThick,
-					z: this.position.z + this.wallThick + top
+					x: structPos.x - windowBulge / 2,
+					y: structPos.y + pos + this._wallThick,
+					z: structPos.z + wallThick + top
 				}    
             break;
             case 2:
                 windowSize = {
                     x: width,
-                    y: this.wallThick + windowBulge,
+                    y: wallThick + windowBulge,
                     z: height 
                 }      
 				windowPos = {
-                    x: this.position.x + pos + this.wallThick,
-                    y: this.position.y + this.size.y + this.wallThick - windowBulge / 2,
-                    z: this.position.z + this.wallThick + top
+                    x: structPos.x + pos + wallThick,
+                    y: structPos.y + structSize.y + wallThick - windowBulge / 2,
+                    z: structPos.z + wallThick + top
                 } 
             break;
             case 3:
                 windowSize = {
-                    x: this.wallThick + windowBulge,
+                    x: wallThick + windowBulge,
                     y: width,
                     z: height 
                 }    
 				windowPos = {
-                    x: this.position.x + this.size.x + this.wallThick - windowBulge / 2,
-                    y: this.position.y + pos + this.wallThick,
-                    z: this.position.z + this.wallThick + top
+                    x: structPos.x + structSize.x + wallThick - windowBulge / 2,
+                    y: structPos.y + pos + wallThick,
+                    z: structPos.z + wallThick + top
                 } 
             break;
             case 4:  
 				windowSize = {
                     x: width,
-                    y: this.wallThick + windowBulge,
+                    y: wallThick + windowBulge,
                     z: height 
                 }
 				windowPos = {
-                    x: this.position.x + pos + this.wallThick,
-                    y: this.position.y - windowBulge / 2,
-                    z: this.position.z + this.wallThick + top
+                    x: structPos.x + pos + wallThick,
+                    y: structPos.y - windowBulge / 2,
+                    z: structPos.z + wallThick + top
                 }
             break;
-            default: console.error('Wrong wallID in drawWindow function');
+            default: console.error('Wrong wallID value in drawWindow function');
         } 
 
         const window = this.drawBox(windowSize, windowPos, 0x2afafa, 0.2);
-        window.name = "window";
-        this.windows.push(window);
-        this.objects.push(window);
+        this._addWindow(window);
 	}
 
     drawLinkPoint(text, src, posVector, options) {
@@ -210,20 +306,20 @@ class Structure {
 
         sprite.parentObj = this;
         caption.parentObj = this;
-        sprite.name = "link-point";
-        caption.name = "link-point-caption";
-        this.linkPoints.push(sprite);
-        this.objects.push(sprite);
-        this.linkText.push(caption);
-        this.objects.push(caption);
-        console.log(sprite);
+        this._addLinkPoint(sprite, caption);
     }
 
-    setHighlight() {
+    hideLinkPoints() {
+        const linkpoints = this.getLinkPoints();
+        linkpoints.forEach(linkpoint => linkpoint.material.color.set(0x005000));
+    }
+
+    _setHighlight() {
         const shell = 0.1;
 
         const group = new THREE.Group();
-        this.objects.forEach(obj => group.add(obj));
+        const objects = this.getObjects();
+        objects.forEach(obj => group.add(obj));
 
         // Находим размер модели
         const sizeBox = new THREE.Box3().setFromObject(group)
@@ -243,8 +339,8 @@ class Structure {
 
         cube.name = "hightlight";
         cube.parentObj = this;
-        this.hightlight = cube;
-        this.objects.push(this.hightlight);
+        this._hightlight = cube;
+        this.addObject(this._hightlight);
 
         this.hideHightlight();
     }
@@ -256,19 +352,26 @@ class Structure {
             opacity: 0.5
         });
 
-        this.hightlight.material = material;
-        this.hightlight.visible = true;
+        this._hightlight.material = material;
+        this._hightlight.visible = true;
     }
 
     hideHightlight() {
-        this.hightlight.visible = false;
+        this._hightlight.visible = false;
     }
 
-    setInteraction() {
+    hideModelsHightlights() {
+        const modelsArr = this.getModels();
+        modelsArr.forEach(model => {
+            model.hideHightlight();
+        });
+    }
+
+    _setInteraction() {
         const shell = 1.5;
 
         const group = new THREE.Group();
-        this.objects.forEach(obj => group.add(obj));
+        this._objects.forEach(obj => group.add(obj));
 
         // Находим размер модели
         const sizeBox = new THREE.Box3().setFromObject(group);
@@ -289,13 +392,14 @@ class Structure {
 
         cube.name = "interaction";
         cube.parentObj = this;
-        this.interactionCube = cube;
-        this.objects.push(this.interactionCube);
+        this._interactionCube = cube;
+        this.addObject(this._interactionCube);
     }
 
-    setOutlineArr() { // Метод для создания контура модели
+    _setOutlineArr() { // Метод для создания контура модели
+        const outlineObjects = this.getOutlineObjects();
         // Создаем новый масив с объектами, на которые необходимо добавить контур
-        const objsArr = [].concat(...this.outline); 
+        const objsArr = [].concat(...outlineObjects); 
         objsArr.forEach(obj => { // Проходимся в цикле по каждому элементу этого массива
             // Задаем тип фигуры (В конкретном случае - контур)
             const geometry = new THREE.EdgesGeometry(obj.geometry); 
@@ -309,29 +413,25 @@ class Structure {
         });
     }
     
-    setCenter() { // Метод для нахождения центра постройки
+    _setCenter() { // Метод для нахождения центра постройки
         const group = new THREE.Group(); // Создаем группу объектов
+        const objects = this.getObjectsArr();
         // Объединяем все объекты на сцене в группу
-        this.objects.forEach(obj => group.add(obj)); 
+        objects.forEach(obj => group.add(obj)); 
         // Создаем невидимый прямоугольник, содержащий в себе все элементы группы
         const box = new THREE.Box3().setFromObject(group); 
         // Находим его центр
         const center = new THREE.Vector3();
         box.getCenter(center);
         center.y = 0; // Координату y(z в привычной нам декартовой системе) ставим в 0
-        this.center = center; // Записываем полученные координаты в свойство класса
-    }
-
-    toModel(options) {
-        const model = new Model(this);
-        model.transform(options);
-        return model
+        this._center = center; // Записываем полученные координаты в свойство класса
     }
 
     getObjects() { // Метод для отрисовки постройки
-        this.setCenter(); // Находим центр модели
-        this.setOutlineArr(); // Создаем контур
-        return this.objects // Возвращаем все объекты
+        this._setCenter(); // Находим центр модели
+        this._setOutlineArr(); // Создаем контур
+        const objects = this.getObjectsArr();
+        return objects // Возвращаем все объекты
     }
 }
 

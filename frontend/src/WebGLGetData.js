@@ -19,7 +19,9 @@ function WebGLGetData() {
         modelDataCallback = result => {
             if (result["refs"]) {
                 const refs = result["refs"].split(', ');
-                infoModel._current.models.forEach(model => {
+                const current = infoModel.getCurrent();
+                const models = current.getModels();
+                models.forEach(model => {
                     if (refs.indexOf(String(model.dbID)) > -1) {
                         model.showHightlight(0xff0000);
                     }
@@ -129,8 +131,9 @@ function showFloorInformation(event) {
     infoModel.hideModelsHightlights();
     target.showHightlight();
 
-    const buildingID = target.dbInfo.buildingID;
-    const floor = target.dbInfo.floor;
+    const dbInfo = target.getDBInfo();
+    const buildingID = dbInfo.buildingID;
+    const floor = dbInfo.floor;
     fetch('http://backend/floorData.php', {
         method: 'POST',
         headers: {

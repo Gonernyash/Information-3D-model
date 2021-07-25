@@ -12,8 +12,9 @@ class Model {
         if (this.src) {
             const loader = new GLTFLoader();
             return new Promise(resolve => {
-                loader.load('http://server/modelLoader.php?model=' + this.src, gltf => {
+                loader.load('http://backend/modelLoader.php?model=' + this.src, gltf => {
                     this.obj = gltf.scene;
+                    console.log(gltf.scene.position);
                     resolve();
                 })
             });
@@ -124,27 +125,29 @@ class Model {
         // Установка центра модели в начало координат (0, 0, 0)
         this.obj.position.sub(center);
 
+        const wallThick = this.parent.getWallThickness();
+
         // Устанавливаем позицию учитывая поворот модели
         switch (rotation) {
             case 1:
-                this.obj.position.x += this.position.y + this.size.z / 2 + this.parent.wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + this.parent.wallThick;
-                this.obj.position.z += this.position.x + this.size.x / 2 + this.parent.wallThick;
+                this.obj.position.x += this.position.y + this.size.z / 2 + wallThick;
+                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
+                this.obj.position.z += this.position.x + this.size.x / 2 + wallThick;
             break;
             case 2:
-                this.obj.position.x += this.position.y + this.size.x / 2 + this.parent.wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + this.parent.wallThick;
-                this.obj.position.z += this.position.x + this.size.z / 2 + this.parent.wallThick;
+                this.obj.position.x += this.position.y + this.size.x / 2 + wallThick;
+                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
+                this.obj.position.z += this.position.x + this.size.z / 2 + wallThick;
             break;
             case 3:
-                this.obj.position.x += this.position.y + this.size.z / 2 + this.parent.wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + this.parent.wallThick;
-                this.obj.position.z += this.position.x + this.size.x / 2 + this.parent.wallThick;
+                this.obj.position.x += this.position.y + this.size.z / 2 + wallThick;
+                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
+                this.obj.position.z += this.position.x + this.size.x / 2 + wallThick;
             break;
             default:
-                this.obj.position.x += this.position.y + this.size.x / 2 + this.parent.wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + this.parent.wallThick;
-                this.obj.position.z += this.position.x + this.size.z / 2 + this.parent.wallThick;
+                this.obj.position.x += this.position.y + this.size.x / 2 + wallThick;
+                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
+                this.obj.position.z += this.position.x + this.size.z / 2 + wallThick;
             break;
         }  
     }
@@ -152,7 +155,7 @@ class Model {
     setHighlight() {
         const shell = 0.1;
         // Находим размер модели
-        const sizeBox = new THREE.Box3().setFromObject(this.obj)
+        const sizeBox = new THREE.Box3().setFromObject(this.obj);
         const size = new THREE.Vector3();
         sizeBox.getSize(size);
 
