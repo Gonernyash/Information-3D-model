@@ -1,4 +1,4 @@
-return async function script(infoModel, Room, toVector, Model) {
+return async function script(infoModel, Room, toVector, Model, showModelInformation) {
     // Размеры комнаты
     const roomSizeX = 27;
     const roomSizeY = 59.5;
@@ -13,7 +13,6 @@ return async function script(infoModel, Room, toVector, Model) {
         0xcccccc, // Цвет
         0.7 // Непрозрачность стен
     )
-    myRoom.setMainGrid(wallWidth);
     // Дверь
     myRoom.drawDoor(10.3, 20.6, 18, 1);
     // Окна
@@ -29,7 +28,7 @@ return async function script(infoModel, Room, toVector, Model) {
         2, // Коэфф. вращения
         { // Параметры
             flipX: true, // Отразить модель по X 
-            events: {'click': infoModel.showModelInformation} // Событие
+            events: {'click': showModelInformation} // Событие
         },
         39 // ID модели в базе данных в таблице 'oborudovanie'
     );
@@ -45,7 +44,7 @@ return async function script(infoModel, Room, toVector, Model) {
         toVector(0, 40, 0), 
         3, 
         {
-            events: {'click': infoModel.showModelInformation}
+            events: {'click': showModelInformation}
         },
         36
     );

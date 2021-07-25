@@ -1,4 +1,4 @@
-return async function script(infoModel, Building, toVector, toStructure) {
+return async function script(infoModel, Building, toVector, toStructure, showFloorInformation) {
     // Размеры здания
     const sizeX = 70; 
     const sizeY = 250;
@@ -13,7 +13,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
         1, // Коэффициент вращения
         { // Дополнительные параметры
             events: { // События
-                'click': infoModel.showFloorInformation // Вывод информации об этаже при клике
+                'click': showFloorInformation // Вывод информации об этаже при клике
             },
             dbInfo: { // Информация для связи с БД
                 buildingID: 1, // id здания в БД
@@ -39,7 +39,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount3: 10,
             windowsCount4: 3,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 1,
@@ -68,7 +68,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount3: 10,
             windowsCount4: 3,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 1,
@@ -90,7 +90,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount3: 5,
             windowsCount4: 3,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 1,
@@ -114,7 +114,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount4: 3,
             windowsTop: 1,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 2,
@@ -137,7 +137,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount3: 26,
             windowsCount4: 3,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 2,
@@ -160,7 +160,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount3: 26,
             windowsCount4: 3,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 2,
@@ -183,7 +183,7 @@ return async function script(infoModel, Building, toVector, toStructure) {
             windowsCount3: 26,
             windowsCount4: 3,
             events: {
-                'click': infoModel.showFloorInformation
+                'click': showFloorInformation
             },
             dbInfo: {
                 buildingID: 2,
