@@ -14,7 +14,7 @@ function Auth(props) {
         const password = passwordInput.current.value;
         setIsLoad(false);
 
-        fetch('http://server/login.php', {
+        fetch('http://backend/login.php', {
         method: 'POST',
         headers: {
             'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'

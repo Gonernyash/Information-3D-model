@@ -25,7 +25,7 @@ function WebGLSearchInput() {
             infoModel._searchMenu.resultList.classList.add('none');
         } else {
             infoModel._searchMenu.resultList.classList.remove('none');
-            fetch('http://server/search.php', {
+            fetch('http://backend/search.php', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'

@@ -5,7 +5,7 @@ function MotorsForm(props) {
     const [data, setData] = useState([[]]);
 
     useEffect(()=>{
-        fetch('http://server/columnData.php', {
+        fetch('http://backend/columnData.php', {
         method: 'POST',
         headers: {
             'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'

@@ -8,17 +8,16 @@ import {infoModel} from '../WebGLOutput';
 //Script
 function scriptInit(name) {
     return new Promise(resolve => {
-        console.log(infoModel.structures);
         const cached = infoModel.findStructures(struct => struct.src === name);
-        console.log(cached); 
         if (!cached) {
-            fetch('http://server/scriptLoader.php', {
+            fetch('http://backend/scriptLoader.php', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 body: "file=" + name
             }).then(res => res.text()).then(res => {
+                    console.log(name);
                     // eslint-disable-next-line
                     const script = Function(res)();
                     const args = getArgs(script);

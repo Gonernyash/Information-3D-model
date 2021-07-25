@@ -103,7 +103,7 @@ function showModelInformation(event) {
     const id = target.dbID; // id модели в БД
 
     // Отправка запроса на сервер
-    fetch('http://server/modelData.php', {
+    fetch('http://backend/modelData.php', {
         method: 'POST', // Для отправки используем метод POST
         headers: {
             // Помечаем отправные ланные как данные с формы
@@ -131,7 +131,7 @@ function showFloorInformation(event) {
 
     const buildingID = target.dbInfo.buildingID;
     const floor = target.dbInfo.floor;
-    fetch('http://server/floorData.php', {
+    fetch('http://backend/floorData.php', {
         method: 'POST',
         headers: {
             'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -156,7 +156,7 @@ function showRoomInformation(event) {
     target.material.color.set(0xffffff);
 
     const roomID = target.dbID;
-    fetch('http://server/roomData.php', {
+    fetch('http://backend/roomData.php', {
         method: 'POST',
         headers: {
             'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
