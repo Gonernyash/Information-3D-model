@@ -102,7 +102,7 @@ function showModelInformation(event) {
     // Подсветка той модели, по которой было совершено нажатие
     target.showHightlight();
 
-    const id = target.dbID; // id модели в БД
+    const id = target.getDBid(); // id модели в БД
 
     // Отправка запроса на сервер
     fetch('http://backend/modelData.php', {

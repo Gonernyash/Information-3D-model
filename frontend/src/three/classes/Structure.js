@@ -318,41 +318,39 @@ class Structure {
     // Загрузка внешней модели
     drawModel(src, sizeVector, posVector, rotation, options, dbID) {
         // Создаем новый экземпляр класса "Model", в качестве родителя указав комнату
-       const model = new Model(src, this); 
-       // Если в качестве аргумента "src" указан другой экземпляр "Model", то
-       // Считается, что происходит копирование уже загруженной модели
-       if (src instanceof Model) {
-               model.clone(src); // Копируем его
-               // И инициализируем с новыми параметрами
-               model.init(src, sizeVector, posVector, rotation, options, dbID);
-               console.log(model);
-               this.addModel(model); // Добавляем модель в массив "модели"
-               // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
-               this.addObject(model.obj); // Непосредственно объект
-               // Куб для взаимодействия с моделью при помощи мыши
-               this.addObject(model.interactionCube); 
-               this.addObject(model.hightlight); // Подсветка модели
-               return model; // Возвращаем модель
-       } else {
-           // Если же в качестве аргумента "src" указан путь к внешнему файлу, то
-           // Возвращаем асинхронный объект конструкции Promise
-           return new Promise(resolve => { 
-               // Ждем, пока модель загрузится из внешнего файла, а затем
-               model.load().then(() => { 
-                   // Инициализация
-                   model.init(null, sizeVector, posVector, rotation, options, dbID);
-                   console.log(model);
-                   this.addModel(model); // Добавляем модель в массив "модели"
-                   // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
-                   this.addObject(model.obj); // Непосредственно объект
-                   // Куб для взаимодействия с моделью при помощи мыши
-                   this.addObject(model.interactionCube);
-                   this.addObject(model.hightlight); // Подсветка модели
-                   resolve(model); // Возвращаем модель
-               })
-           });
-       }
-   }
+        const model = new Model(src, this); 
+        // Если в качестве аргумента "src" указан другой экземпляр "Model", то
+        // Считается, что происходит копирование уже загруженной модели
+        if  (src instanceof Model) {
+                model.clone(src); // Копируем его
+                // И инициализируем с новыми параметрами
+                model.init(src, sizeVector, posVector, rotation, options, dbID);
+                this.addModel(model); // Добавляем модель в массив "модели"
+                // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
+                this.addObject(model.getObj()); // Непосредственно объект
+                // Куб для взаимодействия с моделью при помощи мыши
+                this.addObject(model.getInteractionCube());
+                this.addObject(model.getHightlightCube()); // Подсветка модели
+                return model; // Возвращаем модель
+        } else {
+            // Если же в качестве аргумента "src" указан путь к внешнему файлу, то
+            // Возвращаем асинхронный объект конструкции Promise
+            return new Promise(resolve => { 
+                // Ждем, пока модель загрузится из внешнего файла, а затем
+                model.load().then(() => { 
+                    // Инициализация
+                    model.init(null, sizeVector, posVector, rotation, options, dbID);
+                    this.addModel(model); // Добавляем модель в массив "модели"
+                    // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
+                    this.addObject(model.getObj()); // Непосредственно объект
+                    // Куб для взаимодействия с моделью при помощи мыши
+                    this.addObject(model.getInteractionCube());
+                    this.addObject(model.getHightlightCube()); // Подсветка модели
+                    resolve(model); // Возвращаем модель
+                })
+            });
+        }
+    }
 
     _setHighlight() {
         const shell = 0.1;

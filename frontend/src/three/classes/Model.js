@@ -3,18 +3,69 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import InfoModel from './InfoModel';
 
 class Model {
+
+    _obj = null;
+    _original = null;
+    _isClone = false;
+    _src = '';
+    _parent = null;
+    _size = null;
+    _position = null;
+    _rotationIndex = 0;
+    _hightlight = null;
+    _interactionCube = null;
+    _options = null;
+    _color = null;
+    _events = null;
+    _dbID = null;
+
     constructor(src, parent) {
-        this.src = src;
-        this.parent = parent;
+        this._src = src;
+        this._parent = parent;
+    }
+
+    setObj(obj) {
+        this._obj = obj;
+    }
+
+    getObj() {
+        return this._obj;
+    }
+
+    getOriginal() {
+        return this._original;
+    }
+
+    getOptions() {
+        return this._options;
+    }
+
+    getColor() {
+        return this._color;
+    }
+
+    getEvents() {
+        return this._events
+    }
+
+    getDBid() {
+        return this._dbID;
+    }
+
+    getInteractionCube() {
+        return this._interactionCube;
+    }
+
+    getHightlightCube() {
+        return this._hightlight;
     }
 
     load() {
-        if (this.src) {
+        if (this._src) {
             const loader = new GLTFLoader();
             return new Promise(resolve => {
-                loader.load('http://backend/modelLoader.php?model=' + this.src, gltf => {
-                    this.obj = gltf.scene;
-                    console.log(gltf.scene.position);
+                loader.load('http://backend/modelLoader.php?model=' + this._src, gltf => {
+                    this.setObj(gltf.scene);
                     resolve();
                 })
             });
@@ -24,138 +75,176 @@ class Model {
     }
 
     clone(original) {
-        this.obj = original.obj.clone();
+        const obj = original.getObj();
+        const clone = obj.clone();
+        this.setObj(clone);
     }
 
     init(model, sizeVector, posVector, rotation, options, dbID) {
-        this.obj.prototype = this;
-        if (!model) {
-            this.setOptions(options);
-            this.setTexture(this.options.color);
-            this.setSize(sizeVector);
-            this.setPosition(posVector, rotation);
-            this.dbID = dbID;
-        } else {
-            this.setOptions(options, model);
-            this.setTexture(this.options.color);
-            sizeVector ? this.setSize(sizeVector) : this.size = model.size;
-            this.setPosition(posVector ?? model.position, rotation);
-            this.dbID = dbID;
-        }
-        this.applyOptions();
-        this.setHighlight();
-        this.setInteraction();
-        this.setEvents();
+
+        this._options = options ?? {};
+        this._original = model ?? null;
+        this._isClone = Boolean(model);
+        this._obj.prototype = this;
+        this._size = sizeVector;
+        this._position = posVector;
+        this._rotationIndex = rotation ?? 0;
+        this._dbID = dbID ?? null;
+
+        if (this._isClone) { // Если модель является клоном
+            const orig = this.getOriginal();
+            const origOptions = orig.getOptions();
+            // Наследуем все параметры оригинала, но
+            // если их значения отличаются от значений, переданных в аргументе options при инициализации,
+            // то перезаписываем их в пользу options
+            this._options = Object.assign(origOptions, this._options);
+        } 
+
+        this._color = this._options.color ?? 0x535254;
+        this._events = this._options.events ?? {};
+
+        this._setTexture();
+        this._setSize();
+        this._setPosition();
+        this._applyOptions();
+        this._setHighlight();
+        this._setInteraction();
+        this._setEvents();
     }
 
-    transform(options) {
-        const orig = this.src;
-        console.log(orig);
-        const group = new THREE.Group();
-        orig.objects.forEach(obj => group.add(obj));
-        this.obj = group;
-
-        this.setOptions(options)
-        this.size = orig.size;
-        this.position = orig.position;
-        this.setHighlight();
-        this.setInteraction();
-        this.applyOptions();
-    }
-
-    setTexture(color) {
+    _setTexture() {
+        const color = this.getColor();
         const texture = new THREE.MeshStandardMaterial({color: color});
-        this.obj.traverse(child => {
+        this._obj.traverse(child => {
             if (child instanceof THREE.Mesh) {
                 child.material = texture;
             }
         });
     }
 
-    setSize(sizeVector) {
-        this.size = sizeVector;
-        this.size = {
-            x: sizeVector.y,
-            y: sizeVector.z,
-            z: sizeVector.x
+    _setSize() {
+        if (!this._size) {
+            const original = this.getOriginal();
+            if (original) {
+                this._size = original._size;
+            } else {
+                console.error('Null "size" argument value')
+            }
+        }
+
+        const THREEsize = {
+            x: this._size.y,
+            y: this._size.z,
+            z: this._size.x
         };
 
         // Установка размеров модели
         // Размеры в Three JS указываются в scale.
         // (scale - величина, определяющая во сколько раз изменится размер модели по сравнению с изначальным)
         // Выставляем scale = 1 (оригинальный размер модели)
-        this.obj.scale.set(1, 1, 1);
+        this._obj.scale.set(1, 1, 1);
 
         // Находим размер модели
-        const origSizeBox = new THREE.Box3().setFromObject(this.obj)
+        const origSizeBox = new THREE.Box3().setFromObject(this._obj)
         const origSize = new THREE.Vector3();
         origSizeBox.getSize(origSize);
 
         // Находим scale, в который нужно возвести модель для соответствия заданным размерам
         const scale = InfoModel.toVector(
-            this.size.x / origSize.x,
-            this.size.y / origSize.y,
-            this.size.z / origSize.z
+            THREEsize.x / origSize.x,
+            THREEsize.y / origSize.y,
+            THREEsize.z / origSize.z
         );
-        this.obj.scale.set(scale.x, scale.y, scale.z);
+        this._obj.scale.set(scale.x, scale.y, scale.z);
     }
 
-    setPosition(posVector, rotation) {
-        this.position = posVector;
-        // Поворачиваем модель
-        if (rotation) switch (rotation) {
-            case 1: 
-                this.obj.rotateY(Math.PI * 0.5);
-            break;
-            case 2: 
-                this.obj.rotateY(Math.PI)
-            break;
-            case 3: 
-                this.obj.rotateY(Math.PI * 1.5);
-            break;
-            default: console.error('Wrong rotation value in setModelPosition function');
+    getSize() {
+        return this._size;
+    }
+
+    _setPosition() {
+        if (!this._position) {
+            const original = this.getOriginal();
+            if (original) {
+                this._position = original._position;
+            } else {
+                console.error('Null "position" argument value')
+            }
         }
+        const rotation = this._rotationIndex;
+
+        // Поворачиваем модель
+        if (rotation) {
+            this._rotationIndex = rotation;
+            switch (rotation) {
+                case 1: 
+                    this._obj.rotateY(Math.PI * 0.5);
+                break;
+                case 2: 
+                    this._obj.rotateY(Math.PI)
+                break;
+                case 3: 
+                    this._obj.rotateY(Math.PI * 1.5);
+                break;
+                default: console.error('Wrong rotation value in setModelPosition function');
+            }
+        } 
 
         // !Центр, установленный автором модели, может на самом деле не являтся центром(lol)
         // Определение центра модели
-        const box = new THREE.Box3().setFromObject(this.obj);
+        const box = new THREE.Box3().setFromObject(this._obj);
         const center = new THREE.Vector3();
         box.getCenter(center);
 
         // Установка центра модели в начало координат (0, 0, 0)
-        this.obj.position.sub(center);
+        this._obj.position.sub(center);
 
-        const wallThick = this.parent.getWallThickness();
+        const wallThick = this._parent.getWallThickness();
+        const THREEpos = {
+            x: this._position.y,
+            y: this._position.z,
+            z: this._position.x
+        }
+        const THREEsize = {
+            x: this._size.y,
+            y: this._size.z,
+            z: this._size.x
+        }
 
         // Устанавливаем позицию учитывая поворот модели
         switch (rotation) {
             case 1:
-                this.obj.position.x += this.position.y + this.size.z / 2 + wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
-                this.obj.position.z += this.position.x + this.size.x / 2 + wallThick;
+                this._obj.position.x += THREEpos.x + THREEsize.z / 2 + wallThick;
+                this._obj.position.y += THREEpos.y + THREEsize.y / 2 + wallThick;
+                this._obj.position.z += THREEpos.z + THREEsize.x / 2 + wallThick;
             break;
             case 2:
-                this.obj.position.x += this.position.y + this.size.x / 2 + wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
-                this.obj.position.z += this.position.x + this.size.z / 2 + wallThick;
+                this._obj.position.x += THREEpos.x + THREEsize.x / 2 + wallThick;
+                this._obj.position.y += THREEpos.y + THREEsize.y / 2 + wallThick;
+                this._obj.position.z += THREEpos.z + THREEsize.z / 2 + wallThick;
             break;
             case 3:
-                this.obj.position.x += this.position.y + this.size.z / 2 + wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
-                this.obj.position.z += this.position.x + this.size.x / 2 + wallThick;
+                this._obj.position.x += THREEpos.x + THREEsize.z / 2 + wallThick;
+                this._obj.position.y += THREEpos.y + THREEsize.y / 2 + wallThick;
+                this._obj.position.z += THREEpos.z + THREEsize.x / 2 + wallThick;
             break;
             default:
-                this.obj.position.x += this.position.y + this.size.x / 2 + wallThick;
-                this.obj.position.y += this.position.z + this.size.y / 2 + wallThick;
-                this.obj.position.z += this.position.x + this.size.z / 2 + wallThick;
+                this._obj.position.x += THREEpos.x + THREEsize.x / 2 + wallThick;
+                this._obj.position.y += THREEpos.y + THREEsize.y / 2 + wallThick;
+                this._obj.position.z += THREEpos.z + THREEsize.z / 2 + wallThick;
             break;
         }  
     }
 
-    setHighlight() {
+    getPosition() {
+        return this._position
+    }
+
+    _setHighlight() {
         const shell = 0.1;
         // Находим размер модели
-        const sizeBox = new THREE.Box3().setFromObject(this.obj);
+        const obj = this.getObj();
+        const sizeBox = new THREE.Box3().setFromObject(obj);
         const size = new THREE.Vector3();
         sizeBox.getSize(size);
 
@@ -171,7 +260,7 @@ class Model {
         cube.position.set(center.x, center.y, center.z);
 
         cube.parentObj = this;
-        this.hightlight = cube;
+        this._hightlight = cube;
 
         this.hideHightlight();
     }
@@ -183,18 +272,19 @@ class Model {
             opacity: 0.5
         });
 
-        this.hightlight.material = material;
-        this.hightlight.visible = true;
+        this._hightlight.material = material;
+        this._hightlight.visible = true;
     }
 
     hideHightlight() {
-        this.hightlight.visible = false;
+        this._hightlight.visible = false;
     }
 
-    setInteraction() {
+    _setInteraction() {
         const shell = 0.1;
         // Находим размер модели
-        const sizeBox = new THREE.Box3().setFromObject(this.obj);
+        const obj = this.getObj();
+        const sizeBox = new THREE.Box3().setFromObject(obj);
         const size = new THREE.Vector3();
         sizeBox.getSize(size);
 
@@ -210,47 +300,33 @@ class Model {
 
         cube.position.set(center.x, center.y, center.z);
 
-        cube.parentObj = this.obj;
-        this.interactionCube = cube;
+        cube.parentObj = this._obj;
+        this._interactionCube = cube;
     }
 
-    setOptions(options, model) {
-        this.options = {};
-        if (!model) {
-            model = {};
-            model.options = {};
-        }
-        if (!options) options = {};
-        
-        this.options.flipX = options.flipX ?? false;
-        this.options.flipY = options.flipY ?? false;
-        this.options.flipZ = options.flipZ ?? false;
-        this.options.color = options.color ?? model.options.color ?? 0x535254;
-        this.events = options.events ?? model.events ?? {};
-
-    }
-
-    applyOptions() {
-        if (this.options.flipX) {
-            this.obj.scale.x = - this.obj.scale.x;
+    _applyOptions() {
+        const options = this.getOptions();
+        if (options.flipX) {
+            this._obj.scale.x = - this._obj.scale.x;
         }
 
-        if (this.options.flipY) {
-            this.obj.scale.y = - this.obj.scale.y;
+        if (options.flipY) {
+            this._obj.scale.y = - this._obj.scale.y;
         }
 
-        if (this.options.flipZ) {
-            this.obj.scale.z = - this.obj.scale.z;
+        if (options.flipZ) {
+            this._obj.scale.z = - this._obj.scale.z;
         }
     }
 
-    setEvents() {
-        if (this.events) {
-            for (let eventName in this.events) {
-                let handler = this.events[eventName];
+    _setEvents() {
+        const events = this.getEvents();
+        if (events) {
+            for (let eventName in events) {
+                let handler = events[eventName];
                 if (handler) {
-                    this.interactionCube.cursor = 'pointer';
-                    this.interactionCube.on(eventName, (event) => handler(event));
+                    this._interactionCube.cursor = 'pointer';
+                    this._interactionCube.on(eventName, (event) => handler(event));
                 }
             }
         }
