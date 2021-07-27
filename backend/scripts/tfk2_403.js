@@ -15,12 +15,12 @@ return async function script(infoModel, Room, toVector, Model, showModelInformat
     )
     myRoom.drawWall(
         toVector(4, 64, 32),
-        toVector(63, 59, myRoom.wallThick),
+        toVector(63, 59, myRoom.getWallThickness()),
         0xcccccc
     );
     myRoom.drawWall(
         toVector(47, 20, 12),
-        toVector(45, 137, myRoom.wallThick),
+        toVector(45, 137, myRoom.getWallThickness()),
         0xcccccc
     );
     // Дверь
