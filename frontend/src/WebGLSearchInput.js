@@ -49,8 +49,8 @@ function WebGLSearchInput() {
             >
                 <Dropdown.Item eventKey="dvigateli" onSelect={(k, e) => selectItem(k, e)}>Двигатели</Dropdown.Item>
                 <Dropdown.Item eventKey="shitki" onSelect={(k, e) => selectItem(k, e)}>Щиты</Dropdown.Item>
-                <Dropdown.Item eventKey="puskateli" onSelect={(k, e) => selectItem(k, e)}>Пускатели</Dropdown.Item>
-                <Dropdown.Item eventKey="rele" onSelect={(k, e) => selectItem(k, e)}>Реле</Dropdown.Item>
+                {/* <Dropdown.Item eventKey="puskateli" onSelect={(k, e) => selectItem(k, e)}>Пускатели</Dropdown.Item>
+                <Dropdown.Item eventKey="rele" onSelect={(k, e) => selectItem(k, e)}>Реле</Dropdown.Item> */}
             </DropdownButton>
             <div className="webgl-search__input-inner">
                 <div id="WebGL-Search__resultList" className="webgl-search__result-list none">
