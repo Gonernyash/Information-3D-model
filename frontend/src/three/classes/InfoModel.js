@@ -5,6 +5,8 @@ import {GUIInit} from '../GUI';
 import scriptInit from '../scriptInit';
 import Structure from './Structure';
 
+import {showModelInformation} from '../../WebGLGetData';
+
 class InfoModel {
 // Объявление свойств
     // Компоненты THREE JS 
@@ -305,6 +307,14 @@ class InfoModel {
             const formatedData = this._formatFloorData(res); // Форматируем
             setState(formatedData); // Выводим информацию в окно
         });
+    }
+
+    goToModel(place, modelID) {
+        this.chooseScene(place);
+        const current = this.getCurrent();
+        const modelsArr = current.getModels();
+        const model = modelsArr.find(req => req.getDBid() === modelID); 
+        console.log(model);
     }
 
     openSearchBar() {
