@@ -22,7 +22,7 @@ function WebGLGetData() {
                 const current = infoModel.getCurrent();
                 const models = current.getModels();
                 models.forEach(model => {
-                    if (refs.indexOf(String(model.dbID)) > -1) {
+                    if (refs.indexOf(String(model.getDBid())) > -1) {
                         model.showHightlight(0xff0000);
                     }
                 })
