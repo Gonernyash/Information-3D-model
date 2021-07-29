@@ -318,13 +318,13 @@ class Structure {
     // Загрузка внешней модели
     drawModel(src, sizeVector, posVector, rotation, options, dbID) {
         // Создаем новый экземпляр класса "Model", в качестве родителя указав комнату
-        const model = new Model(src, this); 
+        const model = new Model(src, sizeVector, posVector, rotation, options, this, dbID); 
         // Если в качестве аргумента "src" указан другой экземпляр "Model", то
         // Считается, что происходит копирование уже загруженной модели
         if  (src instanceof Model) {
                 model.clone(src); // Копируем его
                 // И инициализируем с новыми параметрами
-                model.init(src, sizeVector, posVector, rotation, options, dbID);
+                model.init();
                 this.addModel(model); // Добавляем модель в массив "модели"
                 // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
                 this.addObject(model.getObj()); // Непосредственно объект
@@ -339,7 +339,7 @@ class Structure {
                 // Ждем, пока модель загрузится из внешнего файла, а затем
                 model.load().then(() => { 
                     // Инициализация
-                    model.init(null, sizeVector, posVector, rotation, options, dbID);
+                    model.init();
                     this.addModel(model); // Добавляем модель в массив "модели"
                     // Добавляем все части модели, предназначенные для отрисовки, в массив "объекты"
                     this.addObject(model.getObj()); // Непосредственно объект

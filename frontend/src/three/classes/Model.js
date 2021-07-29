@@ -19,17 +19,45 @@ class Model {
     _events = null;
     _dbID = null;
 
-    constructor(src, parent) {
-        this._src = src;
+    constructor(src, sizeVector, posVector, rotation, options, parent, dbID) {
+        
         this._parent = parent;
+        this._options = options ?? {};
+        this._size = sizeVector;
+        this._position = posVector;
+        this._rotationIndex = rotation ?? 0;
+        this._dbID = dbID ?? null;
+
+        if (src instanceof Model) {
+            this._original = src
+            this._src = src.getSrc();
+            this._isClone = true;
+            const origOptions = this._original.getOptions();
+            // Наследуем все параметры оригинала, но
+            // если их значения отличаются от значений, переданных в аргументе options при инициализации,
+            // то перезаписываем их в пользу options
+            this._options = Object.assign(origOptions, this._options);
+        } else {
+            this._original = null;
+            this._src = src;
+            this._isClone = false;
+        }
+
+        this._color = this._options.color ?? 0x535254;
+        this._events = this._options.events ?? {};
     }
 
     setObj(obj) {
+        obj.prototype = this;
         this._obj = obj;
     }
 
     getObj() {
         return this._obj;
+    }
+
+    getSrc() {
+        return this._src;
     }
 
     getOriginal() {
@@ -80,29 +108,7 @@ class Model {
         this.setObj(clone);
     }
 
-    init(model, sizeVector, posVector, rotation, options, dbID) {
-
-        this._options = options ?? {};
-        this._original = model ?? null;
-        this._isClone = Boolean(model);
-        this._obj.prototype = this;
-        this._size = sizeVector;
-        this._position = posVector;
-        this._rotationIndex = rotation ?? 0;
-        this._dbID = dbID ?? null;
-
-        if (this._isClone) { // Если модель является клоном
-            const orig = this.getOriginal();
-            const origOptions = orig.getOptions();
-            // Наследуем все параметры оригинала, но
-            // если их значения отличаются от значений, переданных в аргументе options при инициализации,
-            // то перезаписываем их в пользу options
-            this._options = Object.assign(origOptions, this._options);
-        } 
-
-        this._color = this._options.color ?? 0x535254;
-        this._events = this._options.events ?? {};
-
+    init() {
         this._setTexture();
         this._setSize();
         this._setPosition();
